@@ -35,7 +35,7 @@ if (!empty($path)) {
     if (!empty($scripts)) {
         require_once '/var/www/.structure/library/base/communication.php';
 
-        if (is_private_connection(true, true)) {
+        if (is_private_connection(true)) {
             header('Content-type: Application/JSON');
             require_once '/var/www/.structure/library/base/requirements/account_systems.php';
             $application = new Application(null);
