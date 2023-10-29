@@ -6,7 +6,7 @@ if (!empty($path)) {
     require_once '/var/www/.structure/library/base/communication.php';
     require_once '/var/www/.structure/library/base/requirements/account_systems.php';
     $application = new Application(null);
-    $session = $application->getWebsiteSession();
+    $session = $application->getAccountSession();
     $session = $session->getSession();
 
     if ($session->isPositiveOutcome()
@@ -26,8 +26,6 @@ if (!empty($path)) {
             }
         }
         echo $contents;
-    } else {
-        var_dump(get_client_ip_address());
     }
 } else {
     $scripts = get_form_get("scripts");
@@ -39,7 +37,7 @@ if (!empty($path)) {
             header('Content-type: Application/JSON');
             require_once '/var/www/.structure/library/base/requirements/account_systems.php';
             $application = new Application(null);
-            $session = $application->getWebsiteSession();
+            $session = $application->getAccountSession();
             $session = $session->getSession();
 
             if (!$session->isPositiveOutcome()) {
