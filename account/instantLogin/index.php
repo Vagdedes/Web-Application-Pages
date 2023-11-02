@@ -1,5 +1,5 @@
 <?php
-require_once '/var/www/.structure/library/account/api/tasks/loader.php';
+require '/var/www/.structure/library/account/api/tasks/loader.php';
 load_page(false, function (Account $account, bool $isLoggedIn, AccountSession $session) {
     if ($isLoggedIn) {
         account_page_redirect($account, true, null);
