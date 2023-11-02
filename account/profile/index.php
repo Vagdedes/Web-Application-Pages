@@ -11,7 +11,7 @@ load_page(true, function (bool $isLoggedIn, Application $application) {
             <div class='area_form' id='marginless'>
                 <a href='https://" . get_domain() . "/discord' class='button' id='blue'>Join Discord</a>
                 <p>
-                <a href='$website_account_url/exit' class='button' id='red'>Log Out</a>
+                <a href='$website_account_url/profile/exit' class='button' id='red'>Log Out</a>
             </div></div>
             </div>";
     } else {
