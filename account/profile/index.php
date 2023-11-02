@@ -1,5 +1,5 @@
 <?php
-require_once '/var/www/.structure/library/design/account/loader.php';
+require_once '/var/www/.structure/library/account/api/tasks/loader.php';
 load_page(true, function (bool $isLoggedIn, Application $application) {
     global $website_account_url;
 
