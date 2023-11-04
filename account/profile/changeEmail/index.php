@@ -5,7 +5,7 @@ load_page(true, function (Account $account, bool $isLoggedIn) {
 
     if (!empty($token)) {
         $result = $account->getEmail()->completeVerification($token);
-        account_page_redirect($account, true, $result->getMessage());
+        account_page_redirect($account, $isLoggedIn, $result->getMessage());
     } else if ($isLoggedIn && isset($_POST["change"])) {
         $result = $account->getEmail()->requestVerification(get_form_post("email"));
         $result = $result->getMessage();
