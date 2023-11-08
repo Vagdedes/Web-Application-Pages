@@ -11,7 +11,10 @@ load_page(false, function (Account $account, bool $isLoggedIn) {
                 account_page_redirect($account, true, $result->getMessage());
             }
         } else {
-            account_page_redirect(null, false, "You must be logged in to download this file.");
+            global $website_account_url;
+            redirect_to_url($website_account_url . "/profile/"
+                . "?redirectURL=" . get_user_url()
+                . "&message=You must be logged in to download this file.");
         }
     } else {
         $token = get_form_get("token");
