@@ -1,6 +1,6 @@
 <?php
 require '/var/www/.structure/library/account/api/tasks/loader.php';
-load_page(true, function (bool $isLoggedIn, Application $application) {
+load_page(true, function (Account $account, bool $isLoggedIn) {
     global $website_account_url;
 
     if ($isLoggedIn) {
@@ -24,7 +24,7 @@ load_page(true, function (bool $isLoggedIn, Application $application) {
                 if (!is_email($email)) {
                     redirect_to_url("?message=Please enter a valid email address");
                 } else {
-                    $account = $application->getAccount(null, $email);
+                    $account = $account->getNew(null, $email);
 
                     if ($account->exists()) {
                         $result = $account->getActions()->logIn(get_form_post("password"));
