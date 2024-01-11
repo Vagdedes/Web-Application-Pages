@@ -41,7 +41,7 @@ load_page(true, function (Account $account, bool $isLoggedIn) {
                     . "Email: $email" . "\r\n"
                     . "Type: " . ($isLoggedIn ? "Logged In" : "Logged Out")
                     . "\r\n"
-                    . ($platformsString !== null ? $platformsString : "")
+                    . ($platformsString !== null ? $platformsString : "\r\n")
                     . strip_tags($info);
 
                 if (services_self_email($email, $title, $content)) {
