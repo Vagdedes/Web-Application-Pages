@@ -60,11 +60,5 @@ load_page(true, function (Account $account, bool $isLoggedIn) {
                 </form>
             </div>
         </div>";
-
-        echo "<div class='area'>
-                <div class='area_form' id='marginless'>
-                    <a href='$website_account_url/profile/changePassword' class='button' id='red'>Forgot My Password</a>
-                </div>
-            </div>";
     }
 });
