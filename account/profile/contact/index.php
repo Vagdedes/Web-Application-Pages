@@ -62,7 +62,7 @@ load_page(true, function (Account $account, bool $isLoggedIn) {
         echo "<input type='email' name='email' placeholder='Email Address' minlength=5 maxlength=384>";
     }
     echo "<input type='text' name='subject' placeholder='Subject' minlength=2 maxlength=64>
-                        <textarea name='info' placeholder='Information regarding contact...' minlength=24 maxlength=2048
+                        <textarea name='info' placeholder='Information regarding communication...' minlength=24 maxlength=2048
                                   style='height: 150px; min-height: 150px;'></textarea>
                         <input type='submit' name='contact' value='Contact Us' class='button' id='blue'>";
 
