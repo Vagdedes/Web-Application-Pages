@@ -32,8 +32,7 @@ load_page(true, function (Account $account, bool $isLoggedIn) {
                         if ($result->isPositiveOutcome()) {
                             $redirectURL = get_form_get("redirectURL");
 
-                            if (starts_with($redirectURL, "https://" . get_domain())
-                                || starts_with($redirectURL, "http://" . get_domain())) {
+                            if (get_domain_from_url($redirectURL, true) == get_domain(false)) {
                                 redirect_to_url($redirectURL);
                             } else {
                                 account_page_redirect($account, true, $result->getMessage());

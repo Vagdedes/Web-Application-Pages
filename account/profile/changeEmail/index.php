@@ -7,12 +7,13 @@ load_page(true, function (Account $account, bool $isLoggedIn) {
         $result = $account->getEmail()->completeVerification($token);
         account_page_redirect($account, $isLoggedIn, $result->getMessage());
     } else if ($isLoggedIn && isset($_POST["change"])) {
-        $result = $account->getEmail()->requestVerification(get_form_post("email"));
-        $result = $result->getMessage();
+        $result = $account->getEmail()->requestVerification(get_form_post("email"))->getMessage();
 
         if (!empty($result)) {
             $account->getNotifications()->add(AccountNotifications::FORM, "green", $result, "1 minute");
         }
+        account_page_redirect($account, true, $result);
+    } else {
+        account_page_redirect($account, $isLoggedIn, null);
     }
-    account_page_redirect($account, $isLoggedIn, null);
 });

@@ -9,17 +9,7 @@ load_page(true, function (Account $account, bool $isLoggedIn) {
 
             if ($password == get_form_post("repeat_password")) {
                 $result = $account->getPassword()->completeChange($token, $password);
-                $result = $result->getMessage();
-
-                if (!empty($result)) {
-                    if ($isLoggedIn) {
-                        account_page_redirect($account, true, $result);
-                    } else {
-                        account_page_redirect(null, false, $result);
-                    }
-                } else {
-                    account_page_redirect(null, false, null);
-                }
+                account_page_redirect($account, $isLoggedIn, $result->getMessage());
             } else {
                 redirect_to_url("?message=Passwords do not match each other&token=$token");
             }
