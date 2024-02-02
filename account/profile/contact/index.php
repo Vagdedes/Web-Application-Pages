@@ -1,6 +1,6 @@
 <?php
 require '/var/www/.structure/library/account/api/tasks/loader.php';
-load_page(true, function (Account $account, bool $isLoggedIn) {
+load_page(false, function (Account $account, bool $isLoggedIn) {
     if (isset($_POST["contact"])) {
         $emailForm = get_form_post("email");
         $subject = get_form_post("subject");
@@ -34,23 +34,10 @@ load_page(true, function (Account $account, bool $isLoggedIn) {
     }
     echo "<div class='area' id='darker'>
                 <div class='area_logo'>
-                    <div class='paper'>
-                        <ul>
-                            <li class='paper_top'></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                        </ul>
-                    </div>
+                    <img src='https://vagdedes.com/.images/idealistic/logoCircular.png'>
                 </div>
                 <div class='area_title'>
-                    Contact Form
+                    Idealistic AI
                 </div>
                 <div class='area_text'>
                     Contact us by using the form below.
@@ -72,4 +59,4 @@ load_page(true, function (Account $account, bool $isLoggedIn) {
             </div>";
     }
     echo "</form></div></div>";
-}, true, true);
+}, true, null);

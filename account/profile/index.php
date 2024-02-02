@@ -1,6 +1,6 @@
 <?php
 require '/var/www/.structure/library/account/api/tasks/loader.php';
-load_page(true, function (Account $account, bool $isLoggedIn) {
+load_page(true, function (Account $account, bool $isLoggedIn, ?string $forceRedirectURL) {
     global $website_account_url;
 
     if ($isLoggedIn) {
@@ -30,7 +30,7 @@ load_page(true, function (Account $account, bool $isLoggedIn) {
                         $result = $account->getActions()->logIn(get_form_post("password"));
 
                         if ($result->isPositiveOutcome()) {
-                            $redirectURL = get_form_get("redirectURL");
+                            $redirectURL = $forceRedirectURL !== null ? $forceRedirectURL : get_form_get("redirectURL");
 
                             if (get_domain_from_url($redirectURL, true) == get_domain(false)) {
                                 redirect_to_url($redirectURL);
@@ -60,4 +60,4 @@ load_page(true, function (Account $account, bool $isLoggedIn) {
             </div>
         </div>";
     }
-});
+}, true, false, "profile", get_user_url());
