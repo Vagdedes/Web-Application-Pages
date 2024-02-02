@@ -1,32 +1,29 @@
 <?php
+require_once '/var/www/.structure/library/base/utilities.php';
+require_once '/var/www/.structure/library/memory/init.php';
+
 $website = "https://www.idealistic.ai";
+$path = $_GET["path"];
+$division = "Box-sc-g0xbh4-0 cTsUqU js-snippet-clipboard-copy-unpositioned";
+$cacheKey = array(
+    "github-reader",
+    $path
+);
+$file = get_key_value_pair($cacheKey);
 
-if (array_key_exists("path", $_GET)) {
-    require_once '/var/www/.structure/library/base/utilities.php';
-    require_once '/var/www/.structure/library/memory/init.php';
+if ($file === null || $file === false) {
+    $file = @file_get_contents("https://github.com/IdealisticAI/"
+        . ($_GET["repo"] ?? ".github")
+        . "/blob/main/"
+        . ($_GET["path"] ?? "README") . ".md");
+    set_key_value_pair($cacheKey, $file, "5 minutes");
 
-    $path = $_GET["path"];
-    $division = "Box-sc-g0xbh4-0 cTsUqU js-snippet-clipboard-copy-unpositioned";
-    $cacheKey = array(
-        "github-reader",
-        $path
-    );
-    $file = get_key_value_pair($cacheKey);
-
-    if ($file === null || $file === false) {
-        $file = @file_get_contents("https://github.com/IdealisticAI/.github/blob/main/" . $path . ".md");
-        set_key_value_pair($cacheKey, $file, "5 minutes");
-
-        if ($file === false) {
-            header("Location: " . $website);
-            exit();
-        }
+    if ($file === false) {
+        header("Location: " . $website);
+        exit();
     }
-    echo $file;
-} else {
-    header("Location: " . $website);
-    exit();
 }
+echo $file;
 ?>
 <script type="text/javascript">
     window.onload = function () {
