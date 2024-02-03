@@ -1,23 +1,13 @@
 <?php
 require '/var/www/.structure/library/account/api/tasks/loader.php';
-load_page(true, function (Account $account, bool $isLoggedIn, ?string $forceRedirectURL) {
-    global $website_account_url;
-
-    if ($isLoggedIn) {
-        echo "<div class='area'>
-            <div class='area_title'>Welcome to Your Account</div>
-            <div class='area_text'>To manage your account, please join our Discord via the button below.</div>
-            <p>
-            <div class='area_form' id='marginless'>
-                <a href='https://" . get_domain() . "/discord' class='button' id='blue'>Join Discord</a>
-                <p>
-                <a href='$website_account_url/profile/exit' class='button' id='red'>Log Out</a>
-            </div></div>
-            </div>";
+load_page(false, function (Account $account) {
+    if ($account->exists()) {
+        echo json_encode($account->getObject());
+        echo "<br><a href='" . get_user_url() . "exit'>Log Out</a>";
     } else {
         if (isset($_POST["log_in"])) {
             if (!is_google_captcha_valid()) {
-                account_page_redirect(null, false, "Please complete the bot verification.");
+                echo json_encode("Please complete the bot verification.");
             } else {
                 $email = get_form_post("email");
 
@@ -35,29 +25,25 @@ load_page(true, function (Account $account, bool $isLoggedIn, ?string $forceRedi
                             if (get_domain_from_url($redirectURL, true) == get_domain(false)) {
                                 redirect_to_url($redirectURL);
                             } else {
-                                account_page_redirect($account, true, $result->getMessage());
+                                echo json_encode($result->getMessage());
                             }
                         } else {
-                            account_page_redirect(null, false, $result->getMessage());
+                            echo json_encode($result->getMessage());
                         }
                     } else {
-                        account_page_redirect(null, false, "Account with this email does not exist.");
+                        echo json_encode(null, "Account with this email does not exist.");
                     }
                 }
             }
         }
-        echo "<div class='area' id='darker'>
-            <div class='area_form'>
-                <form method='post'>
-                    <input type='email' name='email' placeholder='Email Address' minlength=5 maxlength=384>
-                    <input type='password' name='password' placeholder='Password' minlength=8 maxlength=384>
-                    <input type='submit' name='log_in' value='Log In' class='button' id='blue'>
+        echo "<form method='post'>
+                <input type='email' name='email' placeholder='Email Address' minlength=5 maxlength=384>
+                <input type='password' name='password' placeholder='Password' minlength=8 maxlength=384>
+                <input type='submit' name='log_in' value='Log In'>
 
-                     <div class=recaptcha>
-		                <div class=g-recaptcha data-sitekey=6Lf_zyQUAAAAAAxfpHY5Io2l23ay3lSWgRzi_l6B></div>
-		            </div>
-                </form>
-            </div>
-        </div>";
+                 <div class='recaptcha'>
+                    <div class='g-recaptcha' data-sitekey=6Lf_zyQUAAAAAAxfpHY5Io2l23ay3lSWgRzi_l6B></div>
+                </div>
+            </form>";
     }
-}, true, false, "profile", get_user_url());
+}, "profile");

@@ -1,10 +1,9 @@
 <?php
 require '/var/www/.structure/library/account/api/tasks/loader.php';
-load_page(false, function (Account $account, bool $isLoggedIn) {
-    if ($isLoggedIn) {
-        account_page_redirect($account, true, null);
+load_page(false, function (Account $account) {
+    if ($account->exists()) {
+        echo json_encode($account->getTwoFactorAuthentication()->verify(get_form_get("token"))->getMessage());
     } else {
-        $twoFactor = $account->getTwoFactorAuthentication()->verify(get_form_get("token"));
-        account_page_redirect($twoFactor->getObject(), $twoFactor->isPositiveOutcome(), $twoFactor->getMessage());
+        echo json_encode("No account found.");
     }
 });

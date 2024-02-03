@@ -1,7 +1,8 @@
 <?php
 require '/var/www/.structure/library/account/api/tasks/loader.php';
-load_page(false, function (Account $account, bool $isLoggedIn) {
+load_page(true, function (Account $account) {
     if (isset($_POST["contact"])) {
+        $isLoggedIn = $account->exists();
         $emailForm = get_form_post("email");
         $subject = get_form_post("subject");
         $info = get_form_post("info");
@@ -14,22 +15,22 @@ load_page(false, function (Account $account, bool $isLoggedIn) {
             $cacheKey = array(get_client_ip_address(), "contact-form");
 
             if (!$isLoggedIn && !is_google_captcha_valid()) {
-                account_page_redirect(null, false, "Please complete the captcha before contacting us.", false);
+                account_page_redirect(null, "Please complete the captcha before contacting us.", false);
             } else if (has_memory_cooldown($cacheKey, null, false)) {
-                account_page_redirect($account, $isLoggedIn, "Please wait a few minutes before contacting us again.", false);
+                account_page_redirect($account, "Please wait a few minutes before contacting us again.", false);
             } else {
-                $content = $account->getEmail()->getSupportEmailDetails($isLoggedIn, $subject, $info, $emailForm);
+                $content = $account->getEmail()->createTicket($isLoggedIn, $subject, $info, $emailForm);
 
                 if (services_self_email($content[0], $content[1], $content[2])) {
                     has_memory_cooldown($cacheKey, "5 minutes");
-                    account_page_redirect($account, $isLoggedIn, "Thanks for taking the time to contact us.");
+                    account_page_redirect($account, "Thanks for taking the time to contact us.");
                 } else {
                     global $email_default_email_name;
-                    account_page_redirect($account, $isLoggedIn, "An error occurred, please contact us at: " . $email_default_email_name, false);
+                    account_page_redirect($account, "An error occurred, please contact us at: " . $email_default_email_name, false);
                 }
             }
         } else {
-            account_page_redirect($account, $isLoggedIn, "Invalid form details.", false);
+            account_page_redirect($account, "Invalid form details.", false);
         }
     }
     echo "<div class='area' id='darker'>
@@ -59,4 +60,4 @@ load_page(false, function (Account $account, bool $isLoggedIn) {
             </div>";
     }
     echo "</form></div></div>";
-}, true, null);
+});
