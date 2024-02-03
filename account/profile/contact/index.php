@@ -1,8 +1,9 @@
 <?php
 require '/var/www/.structure/library/account/api/tasks/loader.php';
-load_page(true, function (Account $account) {
+load_account_page(true, function (Account $account) {
+    $isLoggedIn = $account->exists();
+
     if (isset($_POST["contact"])) {
-        $isLoggedIn = $account->exists();
         $emailForm = get_form_post("email");
         $subject = get_form_post("subject");
         $info = get_form_post("info");
@@ -15,22 +16,22 @@ load_page(true, function (Account $account) {
             $cacheKey = array(get_client_ip_address(), "contact-form");
 
             if (!$isLoggedIn && !is_google_captcha_valid()) {
-                account_page_redirect(null, "Please complete the captcha before contacting us.", false);
+                add_account_page_message(null, "Please complete the captcha before contacting us.");
             } else if (has_memory_cooldown($cacheKey, null, false)) {
-                account_page_redirect($account, "Please wait a few minutes before contacting us again.", false);
+                add_account_page_message($account, "Please wait a few minutes before contacting us again.");
             } else {
-                $content = $account->getEmail()->createTicket($isLoggedIn, $subject, $info, $emailForm);
+                $content = $account->getEmail()->createTicket($subject, $info, $isLoggedIn ? null : $emailForm);
 
                 if (services_self_email($content[0], $content[1], $content[2])) {
                     has_memory_cooldown($cacheKey, "5 minutes");
-                    account_page_redirect($account, "Thanks for taking the time to contact us.");
+                    add_account_page_message($account, "Thanks for taking the time to contact us.");
                 } else {
                     global $email_default_email_name;
-                    account_page_redirect($account, "An error occurred, please contact us at: " . $email_default_email_name, false);
+                    add_account_page_message($account, "An error occurred, please contact us at: " . $email_default_email_name);
                 }
             }
         } else {
-            account_page_redirect($account, "Invalid form details.", false);
+            add_account_page_message($account, "Invalid form details.");
         }
     }
     echo "<div class='area' id='darker'>
@@ -55,8 +56,8 @@ load_page(true, function (Account $account) {
                         <input type='submit' name='contact' value='Contact Us' class='button' id='blue'>";
 
     if (!$isLoggedIn) {
-        echo "<div class=recaptcha>
-                <div class=g-recaptcha data-sitekey=6Lf_zyQUAAAAAAxfpHY5Io2l23ay3lSWgRzi_l6B></div>
+        echo "<div class='recaptcha'>
+                <div class='g-recaptcha' data-sitekey=6Lf_zyQUAAAAAAxfpHY5Io2l23ay3lSWgRzi_l6B></div>
             </div>";
     }
     echo "</form></div></div>";

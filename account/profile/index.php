@@ -1,9 +1,22 @@
 <?php
 require '/var/www/.structure/library/account/api/tasks/loader.php';
-load_page(false, function (Account $account) {
+load_account_page(false, function (Account $account) {
     if ($account->exists()) {
+        if (array_key_exists("message", $_GET)) {
+            redirect_to_url("?");
+        }
+        $year = date("Y");
+        $month = (int)date("m");
+        echo "<style>body { font-size: 20px; }</style>";
         echo json_encode($account->getObject());
-        echo "<br><a href='" . get_user_url() . "exit'>Log Out</a>";
+        echo "<p><a href='https://www.idealistic.ai/contents/?path=finance/input&year=$year&month=$month&domain=vagdedes.com'>Financial Input</a>";
+        echo "<p><a href='https://www.idealistic.ai/contents/?path=finance/output&year=$year&month=$month&domain=vagdedes.com'>Financial Output</a>";
+        echo "<p><a href='https://www.idealistic.ai/contents/?path=spigotmc/premium/anticheats&year=$year&month=$month&domain=vagdedes.com'>AntiCheat Sales</a>";
+        echo "<p><a href='https://docs.google.com/document/d/1EcHFvfM6EgmXVsfpCK-_T3Stfdtg2WTgdg9kIKtdxcM/edit?pli=1'>My Finances</a>";
+        echo "<p><a href='https://wallet.tebex.io'>Tebex Wallet</a>";
+        echo "<p><a href='https://myaccount.epsilonnet.gr'>Invoice Tools</a>";
+        echo "<p><a href='https://dashboard.stripe.com/'>Stripe</a>";
+        echo "<p><a href='" . get_user_url() . "exit'>Log Out</a>";
     } else {
         if (isset($_POST["log_in"])) {
             if (!is_google_captcha_valid()) {
@@ -12,7 +25,7 @@ load_page(false, function (Account $account) {
                 $email = get_form_post("email");
 
                 if (!is_email($email)) {
-                    redirect_to_url("?message=Please enter a valid email address");
+                    echo json_encode("Please enter a valid email address.");
                 } else {
                     $account = $account->getNew(null, $email);
 
@@ -20,18 +33,12 @@ load_page(false, function (Account $account) {
                         $result = $account->getActions()->logIn(get_form_post("password"));
 
                         if ($result->isPositiveOutcome()) {
-                            $redirectURL = $forceRedirectURL !== null ? $forceRedirectURL : get_form_get("redirectURL");
-
-                            if (get_domain_from_url($redirectURL, true) == get_domain(false)) {
-                                redirect_to_url($redirectURL);
-                            } else {
-                                echo json_encode($result->getMessage());
-                            }
+                            redirect_to_url(get_user_url());
                         } else {
                             echo json_encode($result->getMessage());
                         }
                     } else {
-                        echo json_encode(null, "Account with this email does not exist.");
+                        echo json_encode(null, "Account with this email address does not exist.");
                     }
                 }
             }
