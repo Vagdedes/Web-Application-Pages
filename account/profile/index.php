@@ -13,6 +13,8 @@ load_account_page(false, function (Account $account) {
         echo "<p><a href='https://www.idealistic.ai/contents/?path=finance/output&year=$year&month=$month&domain=vagdedes.com'>Financial Output</a>";
         echo "<p><a href='https://www.idealistic.ai/contents/?path=spigotmc/premium/anticheats&year=$year&month=$month&domain=vagdedes.com'>AntiCheat Sales</a>";
         echo "<p><a href='https://docs.google.com/document/d/1EcHFvfM6EgmXVsfpCK-_T3Stfdtg2WTgdg9kIKtdxcM/edit'>My Finances</a>";
+        echo "<p><a href='https://www.idealistic.ai/contents/?path=account/panel&platform=1&id=25638'>User Details</a>";
+        echo "<p><a href='https://www.idealistic.ai/contents/?path=testing&domain=10.0.0.3'>Testing Page</a>";
         echo "<p><a href='https://wallet.tebex.io'>Tebex Wallet</a>";
         echo "<p><a href='https://myaccount.epsilonnet.gr'>Invoice Tools</a>";
         echo "<p><a href='https://dashboard.stripe.com/'>Stripe</a>";
