@@ -1,2 +1,2 @@
 <?php
-echo @file_get_contents("https://www.idealistic.ai/github/reader/?path=profile/README");
+require '/var/www/idealistic/github/index.php';
