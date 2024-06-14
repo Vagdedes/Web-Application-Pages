@@ -1,4 +1,2 @@
 <?php
-require '/var/www/.structure/library/base/utilities.php';
-redirect_to_url("https://github.com/IdealisticAI");
-exit();
+require '/var/www/.structure/library/base/redirect.php';
