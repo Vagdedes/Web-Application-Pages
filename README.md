@@ -1,1 +1,1 @@
-Front End structure which utilizes some of the code of the scalable Backend Applications behind the scalable load-balancers.
+Front End structure of an application built in PHP made to utilize one of multiple identical scalable servers behind one of multiple identical scalable load-balancers.
