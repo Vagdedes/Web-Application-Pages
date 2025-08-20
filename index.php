@@ -1,2 +1,2 @@
 <?php
-echo @file_get_contents("https://www.idealistic.ai/bigmanage");
+require '/var/www/.structure/library/bigmanage/api/tasks/website/v1/index.php';
