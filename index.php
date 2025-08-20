@@ -1,4 +1,2 @@
 <?php
-require '/var/www/.structure/library/base/utilities.php';
-redirect_to_url("https://www.idealistic.ai");
-exit();
+echo @file_get_contents("https://www.idealistic.ai/bigmanage");

@@ -1,2 +1,2 @@
 <?php
-require '/var/www/.structure/library/base/redirect.php';
+echo "Website under construction";
