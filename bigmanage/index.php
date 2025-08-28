@@ -1,2 +1,2 @@
 <?php
-include '/var/www/.structure/library/bigmanage/api/tasks/website/v1/index.html';
+include '/var/www/.structure/library/bigmanage/api/tasks/website/v1/index.php';
