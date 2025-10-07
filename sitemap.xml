@@ -1,24 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-<url>
-  <loc>https://www.idealistic.ai/</loc>
-  <lastmod>2025-08-20T17:02:57+00:00</lastmod>
-  <priority>1.00</priority>
-</url>
-<url>
-  <loc>https://spartan.top/bigmanage/</loc>
-  <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://spartan.top/bigmanage/documentation/</loc>
-  <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-  <priority>0.60</priority>
-</url>
-
+    <url>
+        <loc>https://www.idealistic.ai/</loc>
+        <lastmod>2025-08-20T17:02:57+00:00</lastmod>
+        <priority>1.00</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.95</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/en/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.90</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/el/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.90</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/fr/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.90</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/de/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.90</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/es/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.90</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/nl/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.90</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/it/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.90</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/pt/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.90</priority>
+    </url>
+    <url>
+        <loc>https://www.idealistic.ai/bigmanage/terms/terms_of_use/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>https://www.idealistic.ai/bigmanage/policies/privacy_policy/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/documentation/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/documentation/en/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/documentation/el/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/documentation/de/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/documentation/es/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/documentation/fr/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/documentation/nl/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/documentation/pt/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://spartan.top/bigmanage/documentation/it/</loc>
+        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
+        <priority>0.75</priority>
+    </url>
 </urlset>
