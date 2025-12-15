@@ -5,13 +5,8 @@ load_account_page(false, function (Account $account) {
         if (array_key_exists("message", $_GET)) {
             redirect_to_url("?");
         }
-        $year = date("Y");
-        $month = (int)date("m");
         echo "<style>body { font-size: 20px; }</style>";
         echo json_encode($account->getObject());
-        echo "<p><a href='https://www.idealistic.ai/contents/?path=finance/input&year=$year&month=$month&domain=vagdedes.com'>Financial Input</a>";
-        echo "<p><a href='https://www.idealistic.ai/contents/?path=finance/output&year=$year&month=$month&domain=vagdedes.com'>Financial Output</a>";
-        echo "<p><a href='https://www.idealistic.ai/contents/?path=account/panel&platform=1&id=25638'>User Details</a>";
         echo "<p><a href='" . get_user_url() . "exit'>Log Out</a>";
     } else {
         if (isset($_POST["log_in"])) {
