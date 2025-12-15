@@ -1,6 +1,6 @@
 <?php
 require '/var/www/.structure/library/account/api/tasks/loader.php';
-load_account_page(false, function (Account $account) {
+load_account_page(function (Account $account) {
     if ($account->exists()) {
         if (array_key_exists("message", $_GET)) {
             redirect_to_url("?");

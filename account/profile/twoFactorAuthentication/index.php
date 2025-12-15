@@ -1,6 +1,6 @@
 <?php
 require '/var/www/.structure/library/account/api/tasks/loader.php';
-load_account_page(false, function (Account $account) {
+load_account_page(function (Account $account) {
     if ($account->exists()) {
         echo json_encode("Your account is already verified.");
     } else {
