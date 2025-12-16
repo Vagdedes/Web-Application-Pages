@@ -12,10 +12,12 @@ $cacheKey = array(
 $file = get_key_value_pair($cacheKey);
 
 if ($file === null) {
-    $file = @file_get_contents("https://github.com/IdealisticAI/"
+    $file = timed_file_get_contents("https://github.com/IdealisticAI/"
         . ($_GET["repo"] ?? ".github")
         . "/blob/main/"
-        . ($_GET["path"] ?? "README") . ".md");
+        . ($_GET["path"] ?? "README") . ".md",
+        3
+    );
     set_key_value_pair($cacheKey, $file, "5 minutes");
 }
 if ($file === false) {
