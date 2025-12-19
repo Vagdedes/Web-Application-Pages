@@ -21,12 +21,16 @@ load_account_page(function (Account $account) {
                     $account = $account->getNew(null, $email);
 
                     if ($account->exists()) {
-                        $result = $account->getActions()->logIn(get_form_post("password"));
+                        if ($account->getPermissions()->isAdministrator()) {
+                            $result = $account->getActions()->logIn(get_form_post("password"));
 
-                        if ($result->isPositiveOutcome()) {
-                            redirect_to_url(get_user_url());
+                            if ($result->isPositiveOutcome()) {
+                                redirect_to_url(get_user_url());
+                            } else {
+                                echo json_encode($result->getMessage());
+                            }
                         } else {
-                            echo json_encode($result->getMessage());
+                            echo json_encode("You do not have permission to access this account.");
                         }
                     } else {
                         echo json_encode(null, "Account with this email address does not exist.");
