@@ -6,17 +6,17 @@ load_account_page(function (Account $account) {
             redirect_to_url("?");
         }
         echo "<style>body { font-size: 20px; }</style>";
-        echo json_encode($account->getObject());
+        echo @json_encode($account->getObject());
         echo "<p><a href='" . get_user_url() . "exit'>Log Out</a>";
     } else {
         if (isset($_POST["log_in"])) {
             if (!is_google_captcha_valid()) {
-                echo json_encode("Please complete the bot verification.");
+                echo @json_encode("Please complete the bot verification.");
             } else {
                 $email = get_form_post("email");
 
                 if (!is_email($email)) {
-                    echo json_encode("Please enter a valid email address.");
+                    echo @json_encode("Please enter a valid email address.");
                 } else {
                     $account = $account->getNew(null, $email);
 
@@ -27,13 +27,13 @@ load_account_page(function (Account $account) {
                             if ($result->isPositiveOutcome()) {
                                 redirect_to_url(get_user_url());
                             } else {
-                                echo json_encode($result->getMessage());
+                                echo @json_encode($result->getMessage());
                             }
                         } else {
-                            echo json_encode("You do not have permission to access this account.");
+                            echo @json_encode("You do not have permission to access this account.");
                         }
                     } else {
-                        echo json_encode(null, "Account with this email address does not exist.");
+                        echo @json_encode(null, "Account with this email address does not exist.");
                     }
                 }
             }
