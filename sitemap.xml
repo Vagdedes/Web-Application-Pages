@@ -16,46 +16,6 @@
         <priority>0.95</priority>
     </url>
     <url>
-        <loc>https://idealistic.ai/office/en/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.90</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/el/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.90</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/fr/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.90</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/de/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.90</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/es/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.90</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/nl/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.90</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/it/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.90</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/pt/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.90</priority>
-    </url>
-    <url>
         <loc>https://www.idealistic.ai/office/terms/terms_of_use/</loc>
         <lastmod>2025-08-20T17:02:58+00:00</lastmod>
         <priority>0.85</priority>
@@ -69,45 +29,5 @@
         <loc>https://idealistic.ai/office/documentation/</loc>
         <lastmod>2025-08-20T17:02:58+00:00</lastmod>
         <priority>0.80</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/documentation/en/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.75</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/documentation/el/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.75</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/documentation/de/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.75</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/documentation/es/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.75</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/documentation/fr/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.75</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/documentation/nl/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.75</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/documentation/pt/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.75</priority>
-    </url>
-    <url>
-        <loc>https://idealistic.ai/office/documentation/it/</loc>
-        <lastmod>2025-08-20T17:02:58+00:00</lastmod>
-        <priority>0.75</priority>
     </url>
 </urlset>
