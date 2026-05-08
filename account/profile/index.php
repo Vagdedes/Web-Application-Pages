@@ -22,7 +22,7 @@ load_account_page(function (Account $account) {
 
                     if ($account->exists()) {
                         if ($account->getPermissions()->isAdministrator()) {
-                            $result = $account->getActions()->logIn(get_form_post("password"));
+                            $result = $account->getActions()->logIn(false, get_form_post("password"));
 
                             if ($result->isPositiveOutcome()) {
                                 redirect_to_url(get_user_url());
