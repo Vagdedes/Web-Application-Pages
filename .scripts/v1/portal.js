@@ -106,3 +106,4 @@
             toggleBtn.innerHTML = iconChat;
         }
     });
+}
