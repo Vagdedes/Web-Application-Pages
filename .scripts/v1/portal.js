@@ -1,6 +1,6 @@
 (function () {
     const scriptTag = document.getElementById('idealistic-script');
-    const portalId = scriptTag.getAttribute('data-portal');
+    const portalId = scriptTag ? scriptTag.getAttribute('data-portal') : null;
 
     if (!portalId) {
         console.error('Idealistic: No portal ID provided.');
@@ -15,15 +15,18 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            z-index: 2147483647; /* Max z-index to stay on top of everything */
+            z-index: 2147483647;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
             font-family: sans-serif;
         }
-        #idealistic-iframe {
+        #idealistic-iframe-wrapper {
+            position: relative;
             width: 380px;
             height: 600px;
+            min-width: 380px; /* Δεν θα γίνει μικρότερο από αυτό */
+            min-height: 600px; /* Δεν θα γίνει μικρότερο από αυτό */
             max-height: calc(100vh - 100px);
             max-width: calc(100vw - 40px);
             border: 1px solid rgba(255,255,255,0.1);
@@ -33,20 +36,58 @@
             display: none;
             opacity: 0;
             transform: translateY(20px);
+            /* Εξαιρούμε το width/height από το transition για να είναι ακαριαίο το dragging */
             transition: opacity 0.3s ease, transform 0.3s ease;
             margin-bottom: 15px;
             overflow: hidden;
+            will-change: width, height;
         }
-        #idealistic-iframe.io-open {
+        #idealistic-iframe-wrapper.io-open {
             display: block;
             opacity: 1;
             transform: translateY(0);
+        }
+        #idealistic-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        /* Custom Resizers */
+        .io-resizer-tl {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 24px;
+            height: 24px;
+            cursor: nwse-resize;
+            z-index: 10;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.2) 15%, transparent 15%);
+            border-top-left-radius: 16px;
+        }
+        .io-resizer-top {
+            position: absolute;
+            top: 0;
+            left: 24px;
+            right: 0;
+            height: 8px;
+            cursor: ns-resize;
+            z-index: 9;
+        }
+        .io-resizer-left {
+            position: absolute;
+            top: 24px;
+            left: 0;
+            bottom: 0;
+            width: 8px;
+            cursor: ew-resize;
+            z-index: 9;
         }
         #idealistic-toggle {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background-color: #f4f4f5; /* Light button to contrast the dark theme */
+            background-color: #f4f4f5;
             color: #09090b;
             border: none;
             cursor: pointer;
@@ -71,10 +112,25 @@
     const container = document.createElement('div');
     container.id = 'idealistic-widget-container';
 
+    const wrapper = document.createElement('div');
+    wrapper.id = 'idealistic-iframe-wrapper';
+
+    const resizerTL = document.createElement('div');
+    resizerTL.className = 'io-resizer-tl';
+    const resizerT = document.createElement('div');
+    resizerT.className = 'io-resizer-top';
+    const resizerL = document.createElement('div');
+    resizerL.className = 'io-resizer-left';
+
     const iframe = document.createElement('iframe');
     iframe.id = 'idealistic-iframe';
     iframe.src = portalUrl;
-    iframe.setAttribute('allow', 'microphone'); // Allow voice notes in the iframe
+    iframe.setAttribute('allow', 'microphone');
+
+    wrapper.appendChild(resizerTL);
+    wrapper.appendChild(resizerT);
+    wrapper.appendChild(resizerL);
+    wrapper.appendChild(iframe);
 
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'idealistic-toggle';
@@ -84,26 +140,73 @@
 
     toggleBtn.innerHTML = iconChat;
 
-    container.appendChild(iframe);
+    container.appendChild(wrapper);
     container.appendChild(toggleBtn);
     document.body.appendChild(container);
+
+    let isResizing = false;
+    let resizeDir = '';
+    let startX, startY, startW, startH;
+
+    const startResize = (e, dir) => {
+        isResizing = true;
+        resizeDir = dir;
+        startX = e.clientX;
+        startY = e.clientY;
+        startW = wrapper.offsetWidth;
+        startH = wrapper.offsetHeight;
+
+        iframe.style.pointerEvents = 'none';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    };
+
+    resizerTL.addEventListener('mousedown', (e) => startResize(e, 'both'));
+    resizerT.addEventListener('mousedown', (e) => startResize(e, 'top'));
+    resizerL.addEventListener('mousedown', (e) => startResize(e, 'left'));
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+
+        const maxW = window.innerWidth - 40;
+        const maxH = window.innerHeight - 100;
+
+        if (resizeDir === 'both' || resizeDir === 'left') {
+            let newW = startW + (startX - e.clientX);
+            newW = Math.max(380, Math.min(newW, maxW));
+            wrapper.style.width = newW + 'px';
+        }
+        if (resizeDir === 'both' || resizeDir === 'top') {
+            let newH = startH + (startY - e.clientY);
+            newH = Math.max(600, Math.min(newH, maxH));
+            wrapper.style.height = newH + 'px';
+        }
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (isResizing) {
+            isResizing = false;
+            iframe.style.pointerEvents = 'auto';
+            document.body.style.userSelect = '';
+        }
+    });
 
     let isOpen = false;
     toggleBtn.addEventListener('click', () => {
         isOpen = !isOpen;
         if (isOpen) {
-            iframe.style.display = 'block';
+            wrapper.style.display = 'block';
 
             requestAnimationFrame(() => {
-                iframe.classList.add('io-open');
+                wrapper.classList.add('io-open');
             });
             toggleBtn.innerHTML = iconClose;
         } else {
-            iframe.classList.remove('io-open');
+            wrapper.classList.remove('io-open');
             setTimeout(() => {
-                if (!isOpen) iframe.style.display = 'none';
+                if (!isOpen) wrapper.style.display = 'none';
             }, 300);
             toggleBtn.innerHTML = iconChat;
         }
     });
-});
+})();
