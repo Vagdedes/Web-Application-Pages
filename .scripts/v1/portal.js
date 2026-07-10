@@ -21,6 +21,9 @@
         .io-snap-transition {
             transition: right 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), bottom 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
         }
+        #idealistic-widget-container.io-is-dragging {
+            opacity: 0.85;
+        }
         #idealistic-iframe-wrapper {
             position: relative;
             width: 380px;
@@ -183,17 +186,21 @@
 
     let isOpen = false;
 
+    // --- STATE-BASED POSITION (The absolute fix) ---
+    let currentRight = 20;
+    let currentBottom = 20;
+    container.style.right = currentRight + 'px';
+    container.style.bottom = currentBottom + 'px';
+
     const snapToBounds = () => {
         container.classList.add('io-snap-transition');
-        void container.offsetWidth;
+        void container.offsetWidth; // Force CSS reflow
 
-        const rect = container.getBoundingClientRect();
+        const cWidth = container.offsetWidth;
+        const cHeight = container.offsetHeight;
 
-        let currentRight = window.innerWidth - rect.right;
-        let currentBottom = window.innerHeight - rect.bottom;
-
-        const maxRight = window.innerWidth - rect.width - 20;
-        const maxBottom = window.innerHeight - rect.height - 20;
+        const maxRight = Math.max(20, window.innerWidth - cWidth - 20);
+        const maxBottom = Math.max(20, window.innerHeight - cHeight - 20);
 
         if (currentRight < 20) currentRight = 20;
         if (currentRight > maxRight) currentRight = maxRight;
@@ -203,14 +210,13 @@
 
         container.style.right = currentRight + 'px';
         container.style.bottom = currentBottom + 'px';
-        container.style.left = 'auto';
-        container.style.top = 'auto';
 
         setTimeout(() => {
             container.classList.remove('io-snap-transition');
         }, 400);
     };
 
+    // --- RESIZING LOGIC ---
     let isResizing = false;
     let resizeDir = '';
     let rStartX, rStartY, rStartW, rStartH;
@@ -273,10 +279,12 @@
     window.addEventListener('mouseup', stopResize);
     window.addEventListener('touchend', stopResize);
 
+    // --- INSTANT DISTANCE-BASED DRAG LOGIC ---
+    let isMouseDown = false;
     let isDragging = false;
+    let wasDragging = false;
     let dragStartX, dragStartY;
-    let initialRight, initialBottom;
-    let hasMoved = false;
+    let startRight, startBottom;
 
     const startDrag = (e) => {
         if (e.target.closest('[class^="io-resizer"]')) return;
@@ -284,26 +292,19 @@
         const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
         const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
 
-        isDragging = true;
-        hasMoved = false;
+        isMouseDown = true;
+        isDragging = false;
+        wasDragging = false;
         dragStartX = clientX;
         dragStartY = clientY;
 
-        const rect = container.getBoundingClientRect();
-        initialRight = window.innerWidth - rect.right;
-        initialBottom = window.innerHeight - rect.bottom;
-
-        container.style.left = 'auto';
-        container.style.top = 'auto';
-        container.style.right = initialRight + 'px';
-        container.style.bottom = initialBottom + 'px';
-
-        container.classList.remove('io-snap-transition');
-        iframe.style.pointerEvents = 'none';
+        // Αποθηκεύουμε την τρέχουσα state θέση, ΟΧΙ την DOM θέση
+        startRight = currentRight;
+        startBottom = currentBottom;
     };
 
     const doDrag = (e) => {
-        if (!isDragging) return;
+        if (!isMouseDown) return;
 
         const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
         const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
@@ -311,23 +312,33 @@
         const dx = clientX - dragStartX;
         const dy = clientY - dragStartY;
 
-        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-            hasMoved = true;
-            if (e.cancelable) e.preventDefault();
+        // Το threshold των 5 pixels αποκλείει τα "τρεμάμενα" κλικ.
+        if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+            isDragging = true;
+            wasDragging = true;
+
+            container.classList.add('io-is-dragging');
+            container.style.left = 'auto';
+            container.style.top = 'auto';
+            container.classList.remove('io-snap-transition');
+            iframe.style.pointerEvents = 'none';
         }
 
-        if (hasMoved) {
-            container.style.right = (initialRight - dx) + 'px';
-            container.style.bottom = (initialBottom - dy) + 'px';
+        if (isDragging) {
+            if (e.cancelable) e.preventDefault();
+            currentRight = startRight - dx;
+            currentBottom = startBottom - dy;
+            container.style.right = currentRight + 'px';
+            container.style.bottom = currentBottom + 'px';
         }
     };
 
     const endDrag = () => {
-        if (!isDragging) return;
-        isDragging = false;
-        iframe.style.pointerEvents = 'auto';
-
-        if (hasMoved) {
+        isMouseDown = false;
+        if (isDragging) {
+            isDragging = false;
+            container.classList.remove('io-is-dragging');
+            iframe.style.pointerEvents = 'auto';
             snapToBounds();
         }
     };
@@ -340,36 +351,29 @@
     window.addEventListener('touchmove', doDrag, {passive: false});
     window.addEventListener('touchend', endDrag);
 
+    // Auto-snap αν ο χρήστης αλλάξει μέγεθος στο παράθυρο (π.χ. γυρίσει το κινητό)
+    window.addEventListener('resize', snapToBounds);
+
     toggleBtn.addEventListener('click', (e) => {
-        if (hasMoved) {
-            hasMoved = false;
+        // Αν έγινε έστω και το παραμικρό drag, το κλικ ακυρώνεται σωστά
+        if (wasDragging) {
+            wasDragging = false;
             return;
         }
 
         isOpen = !isOpen;
         if (isOpen) {
             wrapper.style.display = 'block';
-
             container.classList.remove('io-snap-transition');
 
-            snapToBounds();
-
             requestAnimationFrame(() => {
+                snapToBounds();
                 wrapper.classList.add('io-open');
+                toggleBtn.classList.add('io-btn-close');
+                toggleBtn.innerHTML = iconClose;
             });
-
-            toggleBtn.classList.add('io-btn-close');
-            toggleBtn.innerHTML = iconClose;
         } else {
             wrapper.classList.remove('io-open');
-
-            setTimeout(() => {
-                if (!isOpen) {
-                    wrapper.style.display = 'none';
-                    snapToBounds();
-                }
-            }, 350);
-
             toggleBtn.classList.remove('io-btn-close');
             toggleBtn.innerHTML = `
                 <div class="io-toggle-content">
@@ -377,6 +381,13 @@
                     <span class="io-toggle-text">Aa</span>
                 </div>
             `;
+
+            setTimeout(() => {
+                if (!isOpen) {
+                    wrapper.style.display = 'none';
+                    snapToBounds();
+                }
+            }, 350);
         }
     });
 })();
