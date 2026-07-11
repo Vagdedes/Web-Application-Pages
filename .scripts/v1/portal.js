@@ -1,10 +1,12 @@
 (function () {
     const scriptTag = document.getElementById('idealistic-script');
     const portalId = scriptTag ? scriptTag.getAttribute('data-portal') : null;
+    const defaultMessage = scriptTag ? scriptTag.getAttribute('default-message') : null;
 
     if (!portalId) return;
 
-    const portalUrl = `https://www.idealistic.ai/io/v1/portal/view/?id=${portalId}&embedded=true`;
+    const portalUrl = `https://www.idealistic.ai/io/v1/portal/view/?id=${portalId}&embedded=true`
+        + (defaultMessage ? `&default_message=${encodeURIComponent(defaultMessage)}` : '');
 
     const style = document.createElement('style');
     style.innerHTML = `
