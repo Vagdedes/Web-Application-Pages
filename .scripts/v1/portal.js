@@ -1,7 +1,7 @@
 (function () {
     const scriptTag = document.getElementById('idealistic-script');
     const portalId = scriptTag ? scriptTag.getAttribute('data-portal') : null;
-    const defaultMessage = scriptTag ? scriptTag.getAttribute('default-message') : null;
+    const defaultMessage = scriptTag ? scriptTag.getAttribute('data-default-message') : null;
 
     if (!portalId) return;
 
