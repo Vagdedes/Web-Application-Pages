@@ -10,11 +10,23 @@
 
     const style = document.createElement('style');
     style.innerHTML = `
+        /* --- STRICT CSS RESET FOR WIDGET ISOLATION --- */
+        #idealistic-widget-container,
+        #idealistic-widget-container * {
+            box-sizing: border-box !important;
+        }
         #idealistic-widget-container {
             position: fixed;
             z-index: 2147483647;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+            font-size: 16px !important;
+            line-height: normal !important;
+            letter-spacing: normal !important;
+            text-transform: none !important;
+            text-align: left !important;
         }
+
+        /* --- WIDGET STYLES --- */
         .io-snap-transition {
             transition: left 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), right 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), bottom 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
         }
@@ -67,6 +79,8 @@
             height: 100%;
             border: none;
             display: block;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         /* Resizers */
@@ -115,27 +129,29 @@
 
         #idealistic-toggle {
             height: 54px;
-            padding: 0 20px 0 16px;
+            padding: 0 20px 0 16px !important;
+            margin: 0 !important;
             border-radius: 30px;
             background-color: rgba(244, 244, 245, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            color: #09090b;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #09090b !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18) !important;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.2s ease, box-shadow 0.2s ease, width 0.2s ease, border-radius 0.2s ease;
+            transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.2s ease, box-shadow 0.2s ease, width 0.2s ease, border-radius 0.2s ease !important;
             user-select: none;
             -webkit-user-select: none;
             touch-action: none;
+            font-family: inherit !important;
         }
         #idealistic-toggle:hover {
             transform: scale(1.03);
             background-color: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.22) !important;
         }
         #idealistic-toggle:active {
             transform: scale(0.97);
@@ -147,28 +163,34 @@
             pointer-events: none;
         }
         #idealistic-toggle svg {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
+            width: 24px !important;
+            height: 24px !important;
+            fill: currentColor !important;
             flex-shrink: 0;
+            display: block !important;
         }
         .io-toggle-text {
-            font-size: 16px;
-            font-weight: 500;
-            color: #52525b;
-            letter-spacing: -0.2px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+            font-size: 16px !important;
+            font-weight: 500 !important;
+            color: #52525b !important;
+            letter-spacing: -0.2px !important;
+            line-height: normal !important;
+            text-transform: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
         #idealistic-toggle.io-btn-close {
-            width: 54px;
-            padding: 0;
-            border-radius: 50%;
+            width: 54px !important;
+            padding: 0 !important;
+            border-radius: 50% !important;
         }
         #idealistic-toggle.io-btn-close .io-toggle-text {
-            display: none;
+            display: none !important;
         }
         #idealistic-toggle.io-btn-close svg {
-            width: 28px;
-            height: 28px;
+            width: 28px !important;
+            height: 28px !important;
         }
     `;
     document.head.appendChild(style);
