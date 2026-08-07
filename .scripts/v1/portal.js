@@ -368,17 +368,22 @@
         const dynamicMaxW = window.innerWidth - cSide - 20;
         const dynamicMaxH = window.innerHeight - (parseInt(container.style.bottom) || 20) - (toggleBtn.offsetHeight || 54) - 15 - 20;
 
+        let newW = rStartW;
+        let newH = rStartH;
+
         if (resizeDir.includes('left')) {
-            let newW = rStartW + (rStartX - clientX);
-            wrapper.style.width = Math.max(380, Math.min(newW, dynamicMaxW)) + 'px';
+            newW = rStartW + (rStartX - clientX);
+        } else if (resizeDir.includes('right')) {
+            newW = rStartW + (clientX - rStartX);
         }
-        if (resizeDir.includes('right')) {
-            let newW = rStartW + (clientX - rStartX);
-            wrapper.style.width = Math.max(380, Math.min(newW, dynamicMaxW)) + 'px';
-        }
-        if (resizeDir.includes('top')) {
-            let newH = rStartH + (rStartY - clientY);
+
+        if (resizeDir.includes('top') || resizeDir.includes('both')) {
+            newH = rStartH + (rStartY - clientY);
             wrapper.style.height = Math.max(600, Math.min(newH, dynamicMaxH)) + 'px';
+        }
+
+        if (resizeDir.includes('left') || resizeDir.includes('right') || resizeDir.includes('both')) {
+            wrapper.style.width = Math.max(380, Math.min(newW, dynamicMaxW)) + 'px';
         }
     };
 
