@@ -2,7 +2,7 @@
     const scriptTag = document.getElementById('idealistic-script');
     const portalId = scriptTag ? scriptTag.getAttribute('data-portal') : null;
     const defaultMessage = scriptTag ? scriptTag.getAttribute('data-default-message') : null;
-    const hostDomain = window.location.hostname;
+    const hostDomain = scriptTag ? scriptTag.getAttribute('data-default-domain') : window.location.hostname;
 
     if (!portalId) return;
 
