@@ -2,11 +2,13 @@
     const scriptTag = document.getElementById('idealistic-script');
     const portalId = scriptTag ? scriptTag.getAttribute('data-portal') : null;
     const defaultMessage = scriptTag ? scriptTag.getAttribute('data-default-message') : null;
+    const hostDomain = window.location.hostname;
 
     if (!portalId) return;
 
     const portalUrl = `https://www.idealistic.ai/io/v1/portal/view/?id=${portalId}&embedded=true`
-        + (defaultMessage ? `&default_message=${encodeURIComponent(defaultMessage)}` : '');
+        + (defaultMessage ? `&default_message=${encodeURIComponent(defaultMessage)}` : '')
+        + `&default_domain=${encodeURIComponent(hostDomain)}`;
 
     const style = document.createElement('style');
     style.innerHTML = `
