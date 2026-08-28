@@ -126,7 +126,10 @@
         const demoInputTarget = document.getElementById('demoUrlInput');
         if (demoInputTarget) {
             demoInputTarget.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') { e.preventDefault(); window.launchDemo(); }
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    window.launchDemo();
+                }
             });
         }
 
@@ -165,7 +168,10 @@
         const visitorCountInput = document.getElementById('visitorCount');
         if (visitorCountInput) {
             visitorCountInput.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') { e.preventDefault(); window.recommendPlan(); }
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    window.recommendPlan();
+                }
             });
         }
         const defaultSoloSlot = document.getElementById('default-solo-card');
@@ -198,7 +204,9 @@
                 navigator.clipboard.writeText(text).then(() => {
                     const original = this.innerHTML;
                     this.innerHTML = '<i class="bi bi-check2"></i>';
-                    setTimeout(() => { this.innerHTML = original; }, 2000);
+                    setTimeout(() => {
+                        this.innerHTML = original;
+                    }, 2000);
                 });
             });
         });
@@ -263,8 +271,14 @@
                 startScrollLeft = scrollEl.scrollLeft;
                 scrollEl.style.cursor = 'grabbing';
             });
-            scrollEl.addEventListener('mouseleave', () => { isDown = false; scrollEl.style.cursor = 'grab'; });
-            scrollEl.addEventListener('mouseup', () => { isDown = false; scrollEl.style.cursor = 'grab'; });
+            scrollEl.addEventListener('mouseleave', () => {
+                isDown = false;
+                scrollEl.style.cursor = 'grab';
+            });
+            scrollEl.addEventListener('mouseup', () => {
+                isDown = false;
+                scrollEl.style.cursor = 'grab';
+            });
             scrollEl.addEventListener('mousemove', (e) => {
                 if (!isDown) return;
                 e.preventDefault();
@@ -293,7 +307,9 @@
         if (animWords.length > 0) {
             let animIndex = 0;
             const dynamicWordEls = document.querySelectorAll('.mock-dynamic-word');
-            dynamicWordEls.forEach(el => { el.textContent = animWords[0]; });
+            dynamicWordEls.forEach(el => {
+                el.textContent = animWords[0];
+            });
             setInterval(() => {
                 dynamicWordEls.forEach(el => el.classList.add('is-fading'));
                 setTimeout(() => {
@@ -311,10 +327,12 @@
            placeholder text so it never gets visually clipped)
            --------------------------------------------------------------- */
         const measureCtx = document.createElement('canvas').getContext('2d');
+
         function getPhWidth(text, el) {
             measureCtx.font = window.getComputedStyle(el).font;
             return measureCtx.measureText(text).width;
         }
+
         setInterval(() => {
             document.querySelectorAll('textarea#message').forEach(el => {
                 if (!el.dataset.origPh) {
@@ -417,8 +435,15 @@
             }
         });
 
-        window.clearFile = () => { state.selectedFiles = []; if (ui.fileInput) ui.fileInput.value = ''; renderUIState(); };
-        window.clearVoice = () => { state.voiceBlob = null; renderUIState(); };
+        window.clearFile = () => {
+            state.selectedFiles = [];
+            if (ui.fileInput) ui.fileInput.value = '';
+            renderUIState();
+        };
+        window.clearVoice = () => {
+            state.voiceBlob = null;
+            renderUIState();
+        };
 
         const renderUIState = () => {
             ui.previewDiv.innerHTML = '';
@@ -440,7 +465,10 @@
                 ui.previewDiv.innerHTML = '<span class="badge bg-secondary text-white p-2 fs-6 mb-1 me-1"><i class="bi bi-file-earmark"></i> '
                     + state.selectedFiles[0].name + ' <i class="bi bi-x-circle ms-2" style="cursor:pointer" onclick="clearFile()"></i></span>';
             } else {
-                if (!state.isThinking) { ui.input.disabled = false; setPlaceholder(config.userTypePlaceholder); }
+                if (!state.isThinking) {
+                    ui.input.disabled = false;
+                    setPlaceholder(config.userTypePlaceholder);
+                }
                 ui.fileBtn.disabled = false;
                 toggleUtilityButtons(hasText);
             }
@@ -471,7 +499,9 @@
                         const stream = await navigator.mediaDevices.getUserMedia({audio: true});
                         state.mediaRecorder = new MediaRecorder(stream);
                         state.audioChunks = [];
-                        state.mediaRecorder.ondataavailable = ev => { if (ev.data.size > 0) state.audioChunks.push(ev.data); };
+                        state.mediaRecorder.ondataavailable = ev => {
+                            if (ev.data.size > 0) state.audioChunks.push(ev.data);
+                        };
                         state.mediaRecorder.onstop = () => {
                             const type = state.mediaRecorder.mimeType || 'audio/ogg';
                             state.voiceBlob = new Blob(state.audioChunks, {type: type});
@@ -568,12 +598,19 @@
             config.pollingState = true;
             clearTimeout(pollTimer);
             try {
-                const params = new URLSearchParams({session_id: config.sessionId, random_id: config.randomId, after_id: config.lastId});
+                const params = new URLSearchParams({
+                    session_id: config.sessionId,
+                    random_id: config.randomId,
+                    after_id: config.lastId
+                });
                 if (!config.isDemo) {
                     if (config.defaultMessage) params.append('default_message', config.defaultMessage);
                     if (config.domain) params.append('default_domain', config.domain);
                 }
-                const fetchReq = await fetch(config.getUrl + '?' + params.toString(), {method: 'GET', credentials: 'include'});
+                const fetchReq = await fetch(config.getUrl + '?' + params.toString(), {
+                    method: 'GET',
+                    credentials: 'include'
+                });
                 if (!fetchReq.ok) throw new Error("HTTP " + fetchReq.status);
                 const res = await fetchReq.json();
 
@@ -592,11 +629,17 @@
                     let lastWasUser = false;
                     for (const time in history) {
                         if (history[time].user) {
-                            history[time].user.forEach(m => { appendMsg(m, 'user'); fetchedNewMessages = true; });
+                            history[time].user.forEach(m => {
+                                appendMsg(m, 'user');
+                                fetchedNewMessages = true;
+                            });
                             lastWasUser = true;
                         }
                         if (history[time].assistant) {
-                            history[time].assistant.forEach(m => { appendMsg(m, 'assistant'); fetchedNewMessages = true; });
+                            history[time].assistant.forEach(m => {
+                                appendMsg(m, 'assistant');
+                                fetchedNewMessages = true;
+                            });
                             gotAssistant = true;
                             lastWasUser = false;
                         }
@@ -608,12 +651,19 @@
 
                 if (!fetchedNewMessages && config.lastId > 0) {
                     const updateAfterId = Math.max(0, config.lastId - 15);
-                    const updateParams = new URLSearchParams({session_id: config.sessionId, random_id: config.randomId, after_id: updateAfterId});
+                    const updateParams = new URLSearchParams({
+                        session_id: config.sessionId,
+                        random_id: config.randomId,
+                        after_id: updateAfterId
+                    });
                     if (!config.isDemo) {
                         if (config.defaultMessage) updateParams.append('default_message', config.defaultMessage);
                         if (config.domain) updateParams.append('default_domain', config.domain);
                     }
-                    const updateReq = await fetch(config.getUrl + '?' + updateParams.toString(), {method: 'GET', credentials: 'include'});
+                    const updateReq = await fetch(config.getUrl + '?' + updateParams.toString(), {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
                     if (updateReq.ok) {
                         const updateRes = await updateReq.json();
                         if (updateRes.success !== false && updateRes.data && updateRes.data.history) {
@@ -633,7 +683,10 @@
                 const delay = (state.isFirstLoad || state.isThinking) ? 1200 : 4000;
                 if (state.isFirstLoad) {
                     const loader = document.getElementById('loading-screen');
-                    if (loader) { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 500); }
+                    if (loader) {
+                        loader.style.opacity = '0';
+                        setTimeout(() => loader.remove(), 500);
+                    }
                     state.isFirstLoad = false;
                 }
                 pollTimer = setTimeout(sync, delay);
@@ -646,12 +699,19 @@
             clearTimeout(updateTimer);
             try {
                 const updateAfterId = config.lastId > 15 ? config.lastId - 15 : 0;
-                const params = new URLSearchParams({session_id: config.sessionId, random_id: config.randomId, after_id: updateAfterId});
+                const params = new URLSearchParams({
+                    session_id: config.sessionId,
+                    random_id: config.randomId,
+                    after_id: updateAfterId
+                });
                 if (!config.isDemo) {
                     if (config.defaultMessage) params.append('default_message', config.defaultMessage);
                     if (config.domain) params.append('default_domain', config.domain);
                 }
-                const fetchReq = await fetch(config.getUrl + '?' + params.toString(), {method: 'GET', credentials: 'include'});
+                const fetchReq = await fetch(config.getUrl + '?' + params.toString(), {
+                    method: 'GET',
+                    credentials: 'include'
+                });
                 if (fetchReq.ok) {
                     const res = await fetchReq.json();
                     if (res.success !== false && res.data && res.data.history) {
@@ -680,8 +740,14 @@
             const is2FAAttempt = config.isDemo && !config.hasEmail && msg.length === config.codeLength;
             const optData = {};
             if (msg) optData.text = msg;
-            if (state.selectedFiles.length > 0) optData.attachment = {name: state.selectedFiles[0].name, format: state.selectedFiles[0].type || 'File'};
-            if (state.voiceBlob) optData.attachment = {name: i18n.chat_voice_message || 'Voice Message', format: i18n.chat_audio || 'Audio'};
+            if (state.selectedFiles.length > 0) optData.attachment = {
+                name: state.selectedFiles[0].name,
+                format: state.selectedFiles[0].type || 'File'
+            };
+            if (state.voiceBlob) optData.attachment = {
+                name: i18n.chat_voice_message || 'Voice Message',
+                format: i18n.chat_audio || 'Audio'
+            };
 
             appendMsg(optData, 'user', true);
 

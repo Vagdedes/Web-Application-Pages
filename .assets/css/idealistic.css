@@ -84,8 +84,6 @@ body {
     padding-bottom: 100px;
 }
 
-/* index.php sets --chat-bottom-pad-demo via inline style on .chat-history when $isDemo is true
-   (was previously "120px" hardcoded per-request in the PHP; see index.php) */
 .chat-history.is-demo { padding-bottom: 120px; }
 
 .reveal-on-scroll {
@@ -153,17 +151,18 @@ input[type=number] { -moz-appearance: textfield; }
 }
 
 #send-btn {
+    height: 36px;
+    width: 44px;
+    border-radius: 12px !important;
     transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.15s ease-in-out;
     user-select: none;
     -webkit-user-select: none;
 }
 
-/* ---- Mic button (dedicated, next to send — replaces the old "send button
-   morphs into a TAP/record button" behavior) --------------------------- */
 #mic-btn {
     height: 36px;
     width: 44px;
-    border-radius: 12px;
+    border-radius: 12px !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -398,11 +397,6 @@ input[type=number] { -moz-appearance: textfield; }
 
 .portal-hero-wrapper { max-width: 1000px; margin: 0 auto; }
 
-/* ---- Embed snippet: blurred, single-line, still fully copyable --------
-   The visible text is intentionally illegible (blur) so it reads as "this
-   is a code placeholder, just click Copy" rather than something a less
-   technical user feels they need to read/understand. The real value is
-   still in the DOM and still gets copied correctly by the Copy button. */
 .embed-snippet-wrap { position: relative; }
 .embed-snippet {
     display: block;
@@ -417,7 +411,6 @@ input[type=number] { -moz-appearance: textfield; }
     -webkit-user-select: none;
     transition: filter 0.2s ease;
 }
-/* Let a curious user briefly reveal it without needing to understand it */
 .embed-snippet-wrap:hover .embed-snippet,
 .embed-snippet-wrap:focus-within .embed-snippet { filter: blur(0.5px); }
 .embed-snippet-copy-btn { flex-shrink: 0; }
@@ -431,13 +424,6 @@ input[type=number] { -moz-appearance: textfield; }
     max-width: 600px;
 }
 
-/* ==========================================================================
-   Device-specific marketing animation
-   - Desktop / tablet (>=768px): browser window + small corner chat widget
-   - Phone (<768px): phone frame + chat sheet that slides up and covers
-     almost the whole screen, like a real mobile chat widget expanding
-   ========================================================================== */
-
 .mock-browser {
     width: 100%;
     height: 280px;
@@ -450,8 +436,6 @@ input[type=number] { -moz-appearance: textfield; }
     display: flex;
 }
 
-/* Tablet: same scene, slightly smaller corner widget so it doesn't dominate
-   a narrower browser frame */
 @media (min-width: 768px) and (max-width: 1199.98px) {
     .mock-browser { height: 240px; }
     .mock-chat-widget { max-width: 130px; height: 130px; }
@@ -505,9 +489,6 @@ input[type=number] { -moz-appearance: textfield; }
     width: 100%;
 }
 
-/* Was previously animated purely in CSS via a PHP-generated `content:` cycle
-   (@keyframes wordCycle). Now the text itself is set by JS (idealistic.js)
-   cycling through IO_I18N.anim_* strings; this class only handles the fade. */
 .mock-dynamic-word {
     font-size: 19px;
     color: var(--primary-blue);
@@ -610,8 +591,6 @@ input[type=number] { -moz-appearance: textfield; }
 }
 @keyframes bounceDot { 0% { transform: translateY(0); } 100% { transform: translateY(-3px); } }
 
-/* ---- Phone mockup (mobile only, <768px): a phone bezel with a chat sheet
-   that slides up and covers almost the entire screen -------------------- */
 .mock-phone-frame {
     position: relative;
     width: 220px;
@@ -664,9 +643,6 @@ input[type=number] { -moz-appearance: textfield; }
 .mock-phone-page .mock-text-large { font-size: 18px; margin-bottom: 4px; }
 .mock-phone-page .mock-dynamic-word { font-size: 13px; min-height: 32px; }
 
-/* A tiny "chat bubble" launcher that appears to be tapped, then the full
-   sheet takes over — makes the transition read as "this is the chat
-   opening", not just a panel appearing. */
 .mock-phone-launcher {
     position: absolute;
     bottom: 16px; right: 16px;
