@@ -27,14 +27,13 @@
         };
 
         if (!ui.box || !ui.form || !ui.input || !ui.btn) {
-            // This page has no chat UI (shouldn't happen — auth-gate has its own template) — bail out safely.
             return;
         }
 
         const state = {
             selectedFiles: [], voiceBlob: null, isRecording: false, mediaRecorder: null,
             audioChunks: [], isFirstLoad: true, isThinking: false, autoMessageSent: false,
-            isInitialHistoryLoad: true
+            isInitialHistoryLoad: true, pendingBubble: null
         };
 
         const errorToast = window.bootstrap ? new bootstrap.Toast(ui.toastEl, {delay: 4000}) : null;
@@ -48,9 +47,6 @@
             if (errorToast) errorToast.show();
         };
 
-        /* ---------------------------------------------------------------
-           Reveal-on-scroll
-           --------------------------------------------------------------- */
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -62,10 +58,6 @@
         }, {threshold: 0.05, rootMargin: "0px 0px -50px 0px"});
         document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
 
-        /* ---------------------------------------------------------------
-           Hide the bottom bar while any non-chat input is focused on
-           mobile (keyboard overlap avoidance)
-           --------------------------------------------------------------- */
         document.addEventListener('focusin', function (e) {
             if (window.innerWidth <= 991 && e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') && e.target.id !== 'message') {
                 const gb = document.querySelector('.glass-bottom');
@@ -79,9 +71,6 @@
             }
         });
 
-        /* ---------------------------------------------------------------
-           Feature grid tap-to-highlight (mobile equivalent of hover)
-           --------------------------------------------------------------- */
         const featureBoxes = document.querySelectorAll('.feature-box-inner');
         featureBoxes.forEach(box => {
             box.addEventListener('click', function () {
@@ -105,17 +94,11 @@
             }
         });
 
-        /* ---------------------------------------------------------------
-           Language switcher
-           --------------------------------------------------------------- */
         window.changeLanguage = function (lang) {
             document.cookie = "io_lang=" + lang + "; path=/; max-age=31536000";
             window.location.reload();
         };
 
-        /* ---------------------------------------------------------------
-           "Try it" demo URL launcher
-           --------------------------------------------------------------- */
         window.launchDemo = function () {
             const urlField = document.getElementById('demoUrlInput');
             let urlInput = urlField ? urlField.value.trim() : '';
@@ -133,9 +116,6 @@
             });
         }
 
-        /* ---------------------------------------------------------------
-           Pricing calculator
-           --------------------------------------------------------------- */
         window.recommendPlan = function () {
             const visitorInput = document.getElementById('visitorCount');
             let v = parseInt(visitorInput ? visitorInput.value : '0', 10) || 0;
@@ -183,19 +163,12 @@
             defaultSoloSlot.appendChild(defaultSolo);
         }
 
-        /* ---------------------------------------------------------------
-           Paddle checkout
-           --------------------------------------------------------------- */
         window.checkout = function (priceId) {
             if (window.Paddle) {
                 Paddle.Checkout.open({items: [{priceId: priceId, quantity: 1}]});
             }
         };
 
-        /* ---------------------------------------------------------------
-           Embed snippet — copy button (text stays real & correct even
-           though it's visually blurred via CSS)
-           --------------------------------------------------------------- */
         document.querySelectorAll('.embed-snippet-copy-btn').forEach(btn => {
             btn.addEventListener('click', function () {
                 const targetId = this.dataset.copyTarget;
@@ -211,9 +184,6 @@
             });
         });
 
-        /* ---------------------------------------------------------------
-           Marquee carousels (reviews / platform icons)
-           --------------------------------------------------------------- */
         function initCarousel(scrollId, dotsId, originalCount) {
             const scrollEl = document.getElementById(scrollId);
             const dotsEl = document.getElementById(dotsId);
@@ -293,12 +263,6 @@
         if (reviewsScroll) initCarousel('reviews-scroll-area', 'reviews-dots', parseInt(reviewsScroll.dataset.originalCount || '0', 10));
         if (iconsScroll) initCarousel('icons-scroll-area', 'icons-dots', parseInt(iconsScroll.dataset.originalCount || '0', 10));
 
-        /* ---------------------------------------------------------------
-           Animated tagline under the mock browser / mock phone logo.
-           Previously done with a CSS `content:` trick fed by PHP; now it's
-           plain JS cycling through the translated anim_* strings so the
-           CSS file has zero PHP in it.
-           --------------------------------------------------------------- */
         const animWords = [
             i18n.anim_widget, i18n.anim_chatbot, i18n.anim_chatbox, i18n.anim_support,
             i18n.anim_clients, i18n.anim_business, i18n.anim_modern
@@ -322,10 +286,6 @@
             }, 2500);
         }
 
-        /* ---------------------------------------------------------------
-           Placeholder marquee for the chat textarea (scrolls long
-           placeholder text so it never gets visually clipped)
-           --------------------------------------------------------------- */
         const measureCtx = document.createElement('canvas').getContext('2d');
 
         function getPhWidth(text, el) {
@@ -354,12 +314,6 @@
             });
         }, 100);
 
-        /* ---------------------------------------------------------------
-           Chat: mic button + send button
-           (dedicated mic button next to Send, replacing the old
-           "send button morphs into a record button" behavior — the mic
-           button simply hides itself once there's text to send)
-           --------------------------------------------------------------- */
         const setPlaceholder = (text) => {
             ui.input.placeholder = text;
             ui.input.dataset.origPh = text;
@@ -488,7 +442,6 @@
             };
         }
 
-        /* ---- Mic button: press-and-hold to record, tap again to stop --- */
         if (ui.micBtn) {
             const handleVoiceToggle = async (e) => {
                 if (e.type !== 'touchstart') e.preventDefault();
@@ -531,9 +484,6 @@
             ui.micBtn.addEventListener('touchstart', handleVoiceToggle, {passive: true});
         }
 
-        /* ---------------------------------------------------------------
-           Chat rendering + polling
-           --------------------------------------------------------------- */
         const parseText = (text) => {
             const div = document.createElement('div');
             div.textContent = text;
@@ -572,6 +522,15 @@
             const thinking = document.querySelector('.thinking-wrapper');
             if (thinking) ui.box.insertBefore(wrapper, thinking); else ui.box.appendChild(wrapper);
             smoothScrollToBottom(forceScroll);
+            return msg;
+        };
+
+        const linkBubbleId = (bubbleEl, sender, id) => {
+            if (!bubbleEl || !id) return;
+            const targetId = bubbleId(sender, id);
+            const existing = document.getElementById(targetId);
+            if (existing && existing !== bubbleEl) existing.removeAttribute('id');
+            bubbleEl.id = targetId;
         };
 
         const patchBubbleText = (sender, msgData) => {
@@ -630,14 +589,52 @@
                     for (const time in history) {
                         if (history[time].user) {
                             history[time].user.forEach(m => {
-                                appendMsg(m, 'user');
+                                const existingUserBubble = m.id ? document.getElementById(bubbleId('user', m.id)) : null;
+                                if (existingUserBubble) {
+                                    if (m.text) {
+                                        let textNode = Array.from(existingUserBubble.children).find(el => !el.classList.contains('attachment-box'));
+                                        if (!textNode) {
+                                            textNode = document.createElement('div');
+                                            existingUserBubble.insertBefore(textNode, existingUserBubble.firstChild);
+                                        }
+                                        const newHtml = parseText(m.text);
+                                        if (textNode.innerHTML !== newHtml) textNode.innerHTML = newHtml;
+                                    }
+                                } else if (state.pendingBubble) {
+                                    const bubbleEl = state.pendingBubble;
+                                    state.pendingBubble = null;
+                                    linkBubbleId(bubbleEl, 'user', m.id);
+                                    if (m.text) {
+                                        let textNode = Array.from(bubbleEl.children).find(el => !el.classList.contains('attachment-box'));
+                                        if (!textNode) {
+                                            textNode = document.createElement('div');
+                                            bubbleEl.insertBefore(textNode, bubbleEl.firstChild);
+                                        }
+                                        textNode.innerHTML = parseText(m.text);
+                                    }
+                                } else {
+                                    appendMsg(m, 'user');
+                                }
                                 fetchedNewMessages = true;
                             });
                             lastWasUser = true;
                         }
                         if (history[time].assistant) {
                             history[time].assistant.forEach(m => {
-                                appendMsg(m, 'assistant');
+                                const existingAssistantBubble = m.id ? document.getElementById(bubbleId('assistant', m.id)) : null;
+                                if (existingAssistantBubble) {
+                                    if (m.text) {
+                                        let textNode = Array.from(existingAssistantBubble.children).find(el => !el.classList.contains('attachment-box'));
+                                        if (!textNode) {
+                                            textNode = document.createElement('div');
+                                            existingAssistantBubble.insertBefore(textNode, existingAssistantBubble.firstChild);
+                                        }
+                                        const newHtml = parseText(m.text);
+                                        if (textNode.innerHTML !== newHtml) textNode.innerHTML = newHtml;
+                                    }
+                                } else {
+                                    appendMsg(m, 'assistant');
+                                }
                                 fetchedNewMessages = true;
                             });
                             gotAssistant = true;
@@ -677,7 +674,6 @@
                     }
                 }
             } catch (e) {
-                // fail silently, scheduler keeps running
             } finally {
                 config.pollingState = false;
                 const delay = (state.isFirstLoad || state.isThinking) ? 1200 : 4000;
@@ -724,7 +720,6 @@
                     }
                 }
             } catch (e) {
-                // fail silently
             } finally {
                 config.pollingUpdatesState = false;
                 updateTimer = setTimeout(syncUpdates, state.isThinking ? 1000 : 8000);
@@ -749,7 +744,8 @@
                 format: i18n.chat_audio || 'Audio'
             };
 
-            appendMsg(optData, 'user', true);
+            const optimisticBubble = appendMsg(optData, 'user', true);
+            state.pendingBubble = optimisticBubble;
 
             ui.input.disabled = true;
             ui.btn.disabled = true;
@@ -780,6 +776,7 @@
             try {
                 const res = await request(config.addUrl, fd);
                 if (!res.success) {
+                    state.pendingBubble = null;
                     showError(res.message);
                     removeThinking();
                     ui.btn.innerHTML = originalBtnHtml;
@@ -788,6 +785,7 @@
                     if (is2FAAttempt) setTimeout(() => window.location.reload(), 5000);
                 }
             } catch (err) {
+                state.pendingBubble = null;
                 showError(i18n.chat_network_failed || 'The network request failed.');
                 removeThinking();
                 ui.btn.innerHTML = originalBtnHtml;
@@ -798,9 +796,6 @@
         sync();
         syncUpdates();
 
-        /* ---------------------------------------------------------------
-           One-off action toast (delete history / sign in / sign out result)
-           --------------------------------------------------------------- */
         if (window.IO_ACTION_TOAST && ui.toastEl && ui.toastMsg) {
             ui.toastEl.className = 'toast align-items-center border-0 text-bg-' + (window.IO_ACTION_TOAST.success ? 'success' : 'danger');
             ui.toastMsg.textContent = window.IO_ACTION_TOAST.message;
@@ -814,10 +809,6 @@
             }
         }
 
-        /* ---------------------------------------------------------------
-           Hide Paddle checkout inside in-app browsers (Android/iOS
-           webviews can't reliably run the Paddle overlay / app-store rules)
-           --------------------------------------------------------------- */
         if (config.isDemo) {
             const ua = navigator.userAgent || navigator.vendor || window.opera;
             const isAndroid = ua.toLowerCase().indexOf("android") > -1;
