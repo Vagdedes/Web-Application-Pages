@@ -1,11 +1,3 @@
-/* ==========================================================================
-   IDEALISTIC™ — main stylesheet
-   Split out of index.php. Pure CSS, no PHP left inside it — anything that
-   used to be language-dependent (the cycling tagline under the logo) is now
-   driven by JS (see assets/js/idealistic.js) setting textContent instead of
-   this file interpolating translated strings into a `content:` property.
-   ========================================================================== */
-
 :root {
     --bg: #0d0d0f;
     --surface: #1a1a1e;

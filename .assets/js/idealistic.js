@@ -1,11 +1,3 @@
-/* ==========================================================================
-   IDEALISTIC™ — main script
-   Split out of index.php. Expects two globals to already be defined by an
-   inline <script> in index.php BEFORE this file is loaded:
-     window.IO_CONFIG        server-side config (session id, urls, flags...)
-     window.IO_I18N          the handful of translated strings JS needs
-     window.IO_ACTION_TOAST  optional {message, success} for a one-off toast
-   ========================================================================== */
 (function () {
     'use strict';
 
