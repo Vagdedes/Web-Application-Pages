@@ -331,8 +331,7 @@
         const toggleUtilityButtons = (hide) => {
             [ui.deleteBtn, ui.signoutBtn, ui.signinBtn, ui.langBtn].forEach(btn => {
                 if (!btn) return;
-                btn.classList.toggle('d-none', hide);
-                btn.classList.toggle('d-flex', !hide);
+                btn.classList.toggle('is-hidden', hide);
             });
         };
 
@@ -488,6 +487,9 @@
             const div = document.createElement('div');
             div.textContent = text;
             let safeText = div.innerHTML;
+            safeText = safeText.replace(/^### +(.*)$/gm, '<strong class="msg-h3">$1</strong>');
+            safeText = safeText.replace(/^## +(.*)$/gm, '<strong class="msg-h2">$1</strong>');
+            safeText = safeText.replace(/^# +(.*)$/gm, '<strong class="msg-h1">$1</strong>');
             safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             safeText = safeText.replace(/\*(.*?)\*/g, '<em>$1</em>');
             safeText = safeText.replace(/__(.*?)__/g, '<u>$1</u>');
