@@ -7,6 +7,13 @@
     config.pollingState = false;
     config.pollingUpdatesState = false;
 
+    const escapeHtml = (str) => String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
     document.addEventListener('DOMContentLoaded', function () {
 
         const ui = {
@@ -416,7 +423,7 @@
                 setPlaceholder(config.userTypePlaceholder);
                 toggleUtilityButtons(true);
                 ui.previewDiv.innerHTML = '<span class="badge bg-secondary text-white p-2 fs-6 mb-1 me-1"><i class="bi bi-file-earmark"></i> '
-                    + state.selectedFiles[0].name + ' <i class="bi bi-x-circle ms-2" style="cursor:pointer" onclick="clearFile()"></i></span>';
+                    + escapeHtml(state.selectedFiles[0].name) + ' <i class="bi bi-x-circle ms-2" style="cursor:pointer" onclick="clearFile()"></i></span>';
             } else {
                 if (!state.isThinking) {
                     ui.input.disabled = false;
@@ -493,8 +500,11 @@
             safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             safeText = safeText.replace(/\*(.*?)\*/g, '<em>$1</em>');
             safeText = safeText.replace(/__(.*?)__/g, '<u>$1</u>');
-            const urlRegex = /(https?:\/\/[^\s<*]+[^<*.,:;"')\]\s])/g;
-            safeText = safeText.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-info text-decoration-underline" style="word-break: break-all;">$1</a>');
+            const urlRegex = /(https?:\/\/[^\s<*"']+[^<*.,:;"')\]\s])/g;
+            safeText = safeText.replace(urlRegex, function (match) {
+                const hrefSafe = match.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                return '<a href="' + hrefSafe + '" target="_blank" rel="noopener noreferrer" class="text-info text-decoration-underline" style="word-break: break-all;">' + match + '</a>';
+            });
             return safeText;
         };
 
@@ -515,8 +525,8 @@
                 const att = dataObj.attachment;
                 const attBox = document.createElement('div');
                 attBox.className = 'attachment-box';
-                let html = '<strong><i class="bi bi-paperclip"></i> ' + (att.name || i18n.chat_file || 'File') + '</strong>';
-                if (att.analyzed_description) html += '<div class="mt-2 fst-italic">"' + att.analyzed_description + '"</div>';
+                let html = '<strong><i class="bi bi-paperclip"></i> ' + escapeHtml(att.name || i18n.chat_file || 'File') + '</strong>';
+                if (att.analyzed_description) html += '<div class="mt-2 fst-italic">"' + escapeHtml(att.analyzed_description) + '"</div>';
                 attBox.innerHTML = html;
                 msg.appendChild(attBox);
             }
@@ -549,7 +559,7 @@
         };
 
         const request = async (url, fd) => {
-            const res = await fetch(url, {method: 'POST', body: fd, credentials: 'include'});
+            const res = await fetch(url, {method: 'POST', body: fd});
             if (!res.ok) throw new Error("HTTP " + res.status);
             return res.json();
         };
@@ -569,8 +579,7 @@
                     if (config.domain) params.append('default_domain', config.domain);
                 }
                 const fetchReq = await fetch(config.getUrl + '?' + params.toString(), {
-                    method: 'GET',
-                    credentials: 'include'
+                    method: 'GET'
                 });
                 if (!fetchReq.ok) throw new Error("HTTP " + fetchReq.status);
                 const res = await fetchReq.json();
@@ -660,8 +669,7 @@
                         if (config.domain) updateParams.append('default_domain', config.domain);
                     }
                     const updateReq = await fetch(config.getUrl + '?' + updateParams.toString(), {
-                        method: 'GET',
-                        credentials: 'include'
+                        method: 'GET'
                     });
                     if (updateReq.ok) {
                         const updateRes = await updateReq.json();
@@ -707,8 +715,7 @@
                     if (config.domain) params.append('default_domain', config.domain);
                 }
                 const fetchReq = await fetch(config.getUrl + '?' + params.toString(), {
-                    method: 'GET',
-                    credentials: 'include'
+                    method: 'GET'
                 });
                 if (fetchReq.ok) {
                     const res = await fetchReq.json();
