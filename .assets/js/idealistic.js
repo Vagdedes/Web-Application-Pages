@@ -7,13 +7,6 @@
     config.pollingState = false;
     config.pollingUpdatesState = false;
 
-    const escapeHtml = (str) => String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-
     document.addEventListener('DOMContentLoaded', function () {
 
         const ui = {
@@ -40,10 +33,18 @@
         const state = {
             selectedFiles: [], voiceBlob: null, isRecording: false, mediaRecorder: null,
             audioChunks: [], isFirstLoad: true, isThinking: false, autoMessageSent: false,
-            isInitialHistoryLoad: true, pendingBubble: null
+            isInitialHistoryLoad: true, pendingBubble: null, timedOutMessageDate: null, pendingUserDate: null
         };
 
         const errorToast = window.bootstrap ? new bootstrap.Toast(ui.toastEl, {delay: 4000}) : null;
+
+        if (config.forceLogin && window.bootstrap) {
+            const forceLoginModalEl = document.getElementById('signInModal');
+            if (forceLoginModalEl) {
+                new bootstrap.Modal(forceLoginModalEl).show();
+            }
+        }
+
         let pollTimer = null;
         let updateTimer = null;
         let thinkingTimer = null;
@@ -52,6 +53,24 @@
             if (!ui.toastEl || !ui.toastMsg) return;
             ui.toastMsg.textContent = msg;
             if (errorToast) errorToast.show();
+        };
+
+        const parseNaiveDate = (dateStr) => {
+            if (!dateStr) return null;
+            const iso = dateStr.includes('T') ? dateStr : dateStr.replace(' ', 'T') + 'Z';
+            const d = new Date(iso);
+            return isNaN(d.getTime()) ? null : d;
+        };
+
+        const serverTimeAtLoad = parseNaiveDate(config.serverTime);
+        const clientTimeAtLoad = Date.now();
+
+        const msSinceServerDate = (dateStr) => {
+            const messageTime = parseNaiveDate(dateStr);
+            if (!messageTime || !serverTimeAtLoad) return 0;
+            const elapsedAtLoad = serverTimeAtLoad.getTime() - messageTime.getTime();
+            const elapsedSinceLoad = Date.now() - clientTimeAtLoad;
+            return elapsedAtLoad + elapsedSinceLoad;
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -342,7 +361,7 @@
             });
         };
 
-        const showThinking = (forceScroll) => {
+        const showThinking = (forceScroll, timeoutMs) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'd-flex w-100 thinking-wrapper anim-slide-up mb-3';
             wrapper.innerHTML = '<div class="msg-bubble msg-assistant d-flex flex-column justify-content-center" style="width: 260px; height: 72px; gap: 10px;">'
@@ -355,7 +374,9 @@
             ui.btn.disabled = true;
             setPlaceholder(i18n.chat_wait_reply || 'Wait for the reply...');
             updateMicVisibility();
-            thinkingTimer = setTimeout(removeThinking, 60000);
+            clearTimeout(thinkingTimer);
+            const effectiveTimeout = timeoutMs ?? ((config.promptTimeoutSeconds || 60) * 1000);
+            thinkingTimer = setTimeout(removeThinking, Math.max(0, effectiveTimeout));
         };
 
         const removeThinking = () => {
@@ -370,6 +391,7 @@
             ui.input.focus();
         };
         config.userTypePlaceholder = i18n.chat_message_ph || ui.input.placeholder;
+        setPlaceholder(config.userTypePlaceholder);
 
         function smoothScrollToBottom(force) {
             setTimeout(() => {
@@ -423,7 +445,7 @@
                 setPlaceholder(config.userTypePlaceholder);
                 toggleUtilityButtons(true);
                 ui.previewDiv.innerHTML = '<span class="badge bg-secondary text-white p-2 fs-6 mb-1 me-1"><i class="bi bi-file-earmark"></i> '
-                    + escapeHtml(state.selectedFiles[0].name) + ' <i class="bi bi-x-circle ms-2" style="cursor:pointer" onclick="clearFile()"></i></span>';
+                    + state.selectedFiles[0].name + ' <i class="bi bi-x-circle ms-2" style="cursor:pointer" onclick="clearFile()"></i></span>';
             } else {
                 if (!state.isThinking) {
                     ui.input.disabled = false;
@@ -500,11 +522,8 @@
             safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             safeText = safeText.replace(/\*(.*?)\*/g, '<em>$1</em>');
             safeText = safeText.replace(/__(.*?)__/g, '<u>$1</u>');
-            const urlRegex = /(https?:\/\/[^\s<*"']+[^<*.,:;"')\]\s])/g;
-            safeText = safeText.replace(urlRegex, function (match) {
-                const hrefSafe = match.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-                return '<a href="' + hrefSafe + '" target="_blank" rel="noopener noreferrer" class="text-info text-decoration-underline" style="word-break: break-all;">' + match + '</a>';
-            });
+            const urlRegex = /(https?:\/\/[^\s<*]+[^<*.,:;"')\]\s])/g;
+            safeText = safeText.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-info text-decoration-underline" style="word-break: break-all;">$1</a>');
             return safeText;
         };
 
@@ -525,8 +544,8 @@
                 const att = dataObj.attachment;
                 const attBox = document.createElement('div');
                 attBox.className = 'attachment-box';
-                let html = '<strong><i class="bi bi-paperclip"></i> ' + escapeHtml(att.name || i18n.chat_file || 'File') + '</strong>';
-                if (att.analyzed_description) html += '<div class="mt-2 fst-italic">"' + escapeHtml(att.analyzed_description) + '"</div>';
+                let html = '<strong><i class="bi bi-paperclip"></i> ' + (att.name || i18n.chat_file || 'File') + '</strong>';
+                if (att.analyzed_description) html += '<div class="mt-2 fst-italic">"' + att.analyzed_description + '"</div>';
                 attBox.innerHTML = html;
                 msg.appendChild(attBox);
             }
@@ -559,7 +578,7 @@
         };
 
         const request = async (url, fd) => {
-            const res = await fetch(url, {method: 'POST', body: fd});
+            const res = await fetch(url, {method: 'POST', body: fd, credentials: 'include'});
             if (!res.ok) throw new Error("HTTP " + res.status);
             return res.json();
         };
@@ -579,7 +598,8 @@
                     if (config.domain) params.append('default_domain', config.domain);
                 }
                 const fetchReq = await fetch(config.getUrl + '?' + params.toString(), {
-                    method: 'GET'
+                    method: 'GET',
+                    credentials: 'include'
                 });
                 if (!fetchReq.ok) throw new Error("HTTP " + fetchReq.status);
                 const res = await fetchReq.json();
@@ -597,9 +617,11 @@
                     const history = res.data.history;
                     let gotAssistant = false;
                     let lastWasUser = false;
+                    let lastUserDate = null;
                     for (const time in history) {
                         if (history[time].user) {
                             history[time].user.forEach(m => {
+                                lastUserDate = m.date || time;
                                 const existingUserBubble = m.id ? document.getElementById(bubbleId('user', m.id)) : null;
                                 if (existingUserBubble) {
                                     if (m.text) {
@@ -653,8 +675,28 @@
                         }
                     }
                     state.isInitialHistoryLoad = false;
-                    if (gotAssistant) removeThinking();
-                    else if (lastWasUser && !state.isThinking) showThinking();
+                    if (gotAssistant) {
+                        state.pendingUserDate = null;
+                        state.timedOutMessageDate = null;
+                        removeThinking();
+                    } else if (lastWasUser) {
+                        state.pendingUserDate = lastUserDate;
+                    }
+                }
+
+                if (state.pendingUserDate) {
+                    const timeoutMs = (config.promptTimeoutSeconds || 60) * 1000;
+                    const elapsedMs = msSinceServerDate(state.pendingUserDate);
+
+                    if (elapsedMs >= timeoutMs) {
+                        if (state.isThinking) removeThinking();
+                        if (state.timedOutMessageDate !== state.pendingUserDate) {
+                            state.timedOutMessageDate = state.pendingUserDate;
+                            showError(i18n.chat_network_failed || 'The network request failed.');
+                        }
+                    } else if (!state.isThinking) {
+                        showThinking(false, timeoutMs - elapsedMs);
+                    }
                 }
 
                 if (!fetchedNewMessages && config.lastId > 0) {
@@ -669,7 +711,8 @@
                         if (config.domain) updateParams.append('default_domain', config.domain);
                     }
                     const updateReq = await fetch(config.getUrl + '?' + updateParams.toString(), {
-                        method: 'GET'
+                        method: 'GET',
+                        credentials: 'include'
                     });
                     if (updateReq.ok) {
                         const updateRes = await updateReq.json();
@@ -715,7 +758,8 @@
                     if (config.domain) params.append('default_domain', config.domain);
                 }
                 const fetchReq = await fetch(config.getUrl + '?' + params.toString(), {
-                    method: 'GET'
+                    method: 'GET',
+                    credentials: 'include'
                 });
                 if (fetchReq.ok) {
                     const res = await fetchReq.json();

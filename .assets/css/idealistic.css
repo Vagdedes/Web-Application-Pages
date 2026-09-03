@@ -14,18 +14,18 @@ html {
 }
 
 @media (min-width: 2000px) {
-    html { font-size: 110%; }
+    html { font-size: 105%; }
     .chat-container-inner { max-width: 1600px; }
 }
 
 @media (min-width: 2560px) {
-    html { font-size: 130%; }
+    html { font-size: 112%; }
     .chat-container-inner { max-width: 1800px; }
 }
 
 @media (min-width: 3800px) {
-    html { font-size: 160%; }
-    .chat-container-inner { max-width: 2400px; }
+    html { font-size: 120%; }
+    .chat-container-inner { max-width: 2200px; }
 }
 
 ::-webkit-scrollbar { display: none; width: 0; height: 0; }
@@ -139,7 +139,12 @@ body {
 }
 
 .chat-input:focus { background-color: transparent !important; box-shadow: none !important; }
-.chat-input::placeholder { color: rgba(255, 255, 255, 0.6) !important; opacity: 1 !important; }
+.chat-input::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+    opacity: 1 !important;
+    white-space: nowrap;
+    overflow: hidden;
+}
 #signInModal input::placeholder { color: rgba(255, 255, 255, 0.6) !important; opacity: 1; }
 
 input[type=number]::-webkit-inner-spin-button,
@@ -492,7 +497,7 @@ input[type=number] { -moz-appearance: textfield; }
     text-overflow: ellipsis;
     font-family: monospace;
     font-size: 0.8rem;
-    filter: blur(3.5px);
+    filter: blur(1.5px);
     user-select: none;
     -webkit-user-select: none;
     transition: filter 0.2s ease;
