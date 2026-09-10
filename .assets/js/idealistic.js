@@ -122,7 +122,9 @@
 
         window.changeLanguage = function (lang) {
             document.cookie = "io_lang=" + lang + "; path=/; max-age=31536000";
-            window.location.reload();
+            const url = new URL(window.location.href);
+            url.searchParams.set('lang_changed', '1');
+            window.location.href = url.toString();
         };
 
         window.launchDemo = function () {
@@ -608,6 +610,14 @@
 
                 if (res.success === false) {
                     if (res.message && res.message.length > 0) showError(res.message);
+                    return;
+                }
+
+                // The account's language was changed elsewhere (e.g. the AI chat
+                // itself, or another open tab) - pick it up here without waiting
+                // for the visitor to do anything on this page.
+                if (res.language && res.language !== config.language) {
+                    window.location.reload();
                     return;
                 }
 
