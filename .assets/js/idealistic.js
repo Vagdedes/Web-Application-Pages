@@ -593,9 +593,7 @@
                 const params = new URLSearchParams({
                     session_id: config.sessionId,
                     random_id: config.randomId,
-                    after_id: config.lastId,
-                    account_id: config.accountId,
-                    team_id: config.teamId
+                    after_id: config.lastId
                 });
                 if (!config.isDemo) {
                     if (config.defaultMessage) params.append('default_message', config.defaultMessage);
@@ -716,9 +714,7 @@
                     const updateParams = new URLSearchParams({
                         session_id: config.sessionId,
                         random_id: config.randomId,
-                        after_id: updateAfterId,
-                        account_id: config.accountId,
-                        team_id: config.teamId
+                        after_id: updateAfterId
                     });
                     if (!config.isDemo) {
                         if (config.defaultMessage) updateParams.append('default_message', config.defaultMessage);
@@ -765,9 +761,7 @@
                 const params = new URLSearchParams({
                     session_id: config.sessionId,
                     random_id: config.randomId,
-                    after_id: updateAfterId,
-                    account_id: config.accountId,
-                    team_id: config.teamId
+                    after_id: updateAfterId
                 });
                 if (!config.isDemo) {
                     if (config.defaultMessage) params.append('default_message', config.defaultMessage);
@@ -825,8 +819,6 @@
             fd.append('session_id', config.sessionId);
             fd.append('random_id', config.randomId);
             fd.append('language', config.language);
-            fd.append('account_id', config.accountId);
-            fd.append('team_id', config.teamId);
             if (!config.isDemo && config.defaultUrl) fd.append('default_url', config.defaultUrl);
 
             if (state.voiceBlob) {
