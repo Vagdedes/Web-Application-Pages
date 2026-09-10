@@ -13,7 +13,7 @@
 
     const portalUrl = `https://www.idealistic.ai/io/v1/portal/view/?id=${encodeURIComponent(portalId)}&embedded=true`
         + (defaultMessage ? `&default_message=${encodeURIComponent(defaultMessage)}` : '')
-        + `&default_domain=${encodeURIComponent(hostDomain)}`;
+        + `&default_url=${encodeURIComponent(hostDomain)}`;
 
     const style = document.createElement('style');
     style.innerHTML = `

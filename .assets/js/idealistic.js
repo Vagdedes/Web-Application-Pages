@@ -597,7 +597,7 @@
                 });
                 if (!config.isDemo) {
                     if (config.defaultMessage) params.append('default_message', config.defaultMessage);
-                    if (config.domain) params.append('default_domain', config.domain);
+                    if (config.defaultUrl) params.append('default_url', config.defaultUrl);
                 }
                 const fetchReq = await fetch(config.getUrl + '?' + params.toString(), {
                     method: 'GET',
@@ -712,7 +712,7 @@
                     });
                     if (!config.isDemo) {
                         if (config.defaultMessage) updateParams.append('default_message', config.defaultMessage);
-                        if (config.domain) updateParams.append('default_domain', config.domain);
+                        if (config.defaultUrl) updateParams.append('default_url', config.defaultUrl);
                     }
                     const updateReq = await fetch(config.getUrl + '?' + updateParams.toString(), {
                         method: 'GET',
@@ -761,7 +761,7 @@
                 });
                 if (!config.isDemo) {
                     if (config.defaultMessage) params.append('default_message', config.defaultMessage);
-                    if (config.domain) params.append('default_domain', config.domain);
+                    if (config.defaultUrl) params.append('default_url', config.defaultUrl);
                 }
                 const fetchReq = await fetch(config.getUrl + '?' + params.toString(), {
                     method: 'GET',
@@ -817,7 +817,7 @@
             fd.append('language', config.language);
             fd.append('account_id', config.accountId);
             fd.append('team_id', config.teamId);
-            if (!config.isDemo && config.domain) fd.append('default_domain', config.domain);
+            if (!config.isDemo && config.defaultUrl) fd.append('default_url', config.defaultUrl);
 
             if (state.voiceBlob) {
                 fd.append('voice', state.voiceBlob, 'voice_message.ogg');
