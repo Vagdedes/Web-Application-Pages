@@ -591,7 +591,9 @@
                 const params = new URLSearchParams({
                     session_id: config.sessionId,
                     random_id: config.randomId,
-                    after_id: config.lastId
+                    after_id: config.lastId,
+                    account_id: config.accountId,
+                    team_id: config.teamId
                 });
                 if (!config.isDemo) {
                     if (config.defaultMessage) params.append('default_message', config.defaultMessage);
@@ -704,7 +706,9 @@
                     const updateParams = new URLSearchParams({
                         session_id: config.sessionId,
                         random_id: config.randomId,
-                        after_id: updateAfterId
+                        after_id: updateAfterId,
+                        account_id: config.accountId,
+                        team_id: config.teamId
                     });
                     if (!config.isDemo) {
                         if (config.defaultMessage) updateParams.append('default_message', config.defaultMessage);
@@ -751,7 +755,9 @@
                 const params = new URLSearchParams({
                     session_id: config.sessionId,
                     random_id: config.randomId,
-                    after_id: updateAfterId
+                    after_id: updateAfterId,
+                    account_id: config.accountId,
+                    team_id: config.teamId
                 });
                 if (!config.isDemo) {
                     if (config.defaultMessage) params.append('default_message', config.defaultMessage);
@@ -809,6 +815,8 @@
             fd.append('session_id', config.sessionId);
             fd.append('random_id', config.randomId);
             fd.append('language', config.language);
+            fd.append('account_id', config.accountId);
+            fd.append('team_id', config.teamId);
             if (!config.isDemo && config.domain) fd.append('default_domain', config.domain);
 
             if (state.voiceBlob) {
